@@ -1,0 +1,27 @@
+{
+  "apps": [
+    { "name": "三角洲行动", "category": "game", "domains": ["df.qq.com"] },
+    { "name": "王者荣耀", "category": "game", "domains": ["smoba.qq.com", "pvp.qq.com"] },
+    { "name": "和平精英", "category": "game", "domains": ["gp.qq.com"] },
+    { "name": "英雄联盟", "category": "game", "domains": ["lol.qq.com"] },
+    { "name": "英雄联盟手游", "category": "game", "domains": ["lolm.qq.com"] },
+    { "name": "金铲铲之战", "category": "game", "domains": ["jcc.qq.com"] },
+    { "name": "穿越火线", "category": "game", "domains": ["cf.qq.com"] },
+    { "name": "腾讯游戏（通用）", "category": "game", "domains": ["game.qq.com", "wetest.qq.com", "gamesafe.qq.com", "anticheatexpert.com"] },
+    { "name": "我的世界（网易）", "category": "game", "domains": ["mc.163.com", "mc-launcher.webapp.163.com"], "patterns": ["g79*.netease.com"] },
+    { "name": "网易游戏（通用）", "category": "game", "domains": ["nie.netease.com", "gsf.netease.com", "mpay.netease.com", "matrix.netease.com", "mkey.163.com", "nie.163.com"] },
+    { "name": "米哈游游戏", "category": "game", "domains": ["mihoyo.com", "hoyoverse.com", "yuanshen.com", "bh3.com"] },
+    { "name": "哔哩哔哩游戏", "category": "game", "domains": ["biligame.com", "biligame.net"] },
+    { "name": "暴雪游戏", "category": "game", "domains": ["battlenet.com.cn", "blizzard.com"] },
+    { "name": "4399小游戏", "category": "game", "domains": ["4399.com"] },
+    { "name": "Minecraft", "category": "game", "domains": ["minecraft.net", "mojang.com", "minecraftservices.com"] },
+    { "name": "Roblox", "category": "game", "domains": ["roblox.com", "rbxcdn.com"] },
+    { "name": "Steam", "category": "game", "domains": ["steampowered.com", "steamcommunity.com", "steamcontent.com", "steamserver.net", "steamstatic.com"] },
+    { "name": "Epic Games", "category": "game", "domains": ["epicgames.com", "epicgames.dev"] },
+    { "name": "任天堂 Switch", "category": "game", "domains": ["nintendo.net", "nintendo.com"] },
+    { "name": "PlayStation", "category": "game", "domains": ["playstation.net", "playstation.com", "sonyentertainmentnetwork.com"] },
+    { "name": "Xbox", "category": "game", "domains": ["xboxlive.com", "xbox.com"] },
+    { "name": "Game Center", "category": "game", "domains": ["gc.apple.com"] },
+    { "name": "游戏加速器", "category": "game", "domains": ["xunyou.mobi", "xunyou.com", "uu.163.com"] }
+  ]
+}

@@ -1,0 +1,1807 @@
+{
+  "categories": [
+    {
+      "id": "game",
+      "name": "游戏",
+      "entries": [
+        {
+          "name": "4399",
+          "value": "4399.cn"
+        },
+        {
+          "name": "4399",
+          "value": "my4399.com"
+        },
+        {
+          "name": "4399小游戏",
+          "value": "4399.com"
+        },
+        {
+          "name": "CS国服",
+          "value": "csgo.com.cn"
+        },
+        {
+          "name": "DOTA2国服",
+          "value": "dota2.com.cn"
+        },
+        {
+          "name": "Epic Games",
+          "value": "epicgames.com"
+        },
+        {
+          "name": "Epic Games",
+          "value": "epicgames.dev"
+        },
+        {
+          "name": "Game Center",
+          "value": "gc.apple.com"
+        },
+        {
+          "name": "HoYoLAB",
+          "value": "hoyolab.com"
+        },
+        {
+          "name": "Minecraft",
+          "value": "minecraft.net"
+        },
+        {
+          "name": "Minecraft",
+          "value": "minecraftservices.com"
+        },
+        {
+          "name": "Minecraft",
+          "value": "mojang.com"
+        },
+        {
+          "name": "PlayStation",
+          "value": "playstation.com"
+        },
+        {
+          "name": "PlayStation",
+          "value": "playstation.net"
+        },
+        {
+          "name": "PlayStation",
+          "value": "sonyentertainmentnetwork.com"
+        },
+        {
+          "name": "Roblox",
+          "value": "rbxcdn.com"
+        },
+        {
+          "name": "Roblox",
+          "value": "roblox.com"
+        },
+        {
+          "name": "Steam",
+          "value": "steamcommunity.com"
+        },
+        {
+          "name": "Steam",
+          "value": "steamcontent.com"
+        },
+        {
+          "name": "Steam",
+          "value": "steampowered.com"
+        },
+        {
+          "name": "Steam",
+          "value": "steamserver.net"
+        },
+        {
+          "name": "Steam",
+          "value": "steamstatic.com"
+        },
+        {
+          "name": "TapTap",
+          "value": "tap.io"
+        },
+        {
+          "name": "TapTap",
+          "value": "tapapis.cn"
+        },
+        {
+          "name": "TapTap",
+          "value": "taptap.cn"
+        },
+        {
+          "name": "TapTap",
+          "value": "taptap.com"
+        },
+        {
+          "name": "WeGame",
+          "value": "wegame.com"
+        },
+        {
+          "name": "WeGame",
+          "value": "wegame.com.cn"
+        },
+        {
+          "name": "WeGame",
+          "value": "wegame.gtimg.com"
+        },
+        {
+          "name": "Xbox",
+          "value": "xbox.com"
+        },
+        {
+          "name": "Xbox",
+          "value": "xboxlive.com"
+        },
+        {
+          "name": "Yostar",
+          "value": "yostar.cn"
+        },
+        {
+          "name": "三七游戏",
+          "value": "37.com"
+        },
+        {
+          "name": "三七游戏",
+          "value": "37wan.net"
+        },
+        {
+          "name": "三角洲行动",
+          "value": "df.qq.com"
+        },
+        {
+          "name": "九游",
+          "value": "9game.cn"
+        },
+        {
+          "name": "任天堂 Switch",
+          "value": "nintendo.com"
+        },
+        {
+          "name": "任天堂 Switch",
+          "value": "nintendo.net"
+        },
+        {
+          "name": "元梦之星",
+          "value": "ymzx.qq.com"
+        },
+        {
+          "name": "原神",
+          "value": "genshinimpact.com"
+        },
+        {
+          "name": "叠纸游戏",
+          "value": "nuanpaper.com"
+        },
+        {
+          "name": "叠纸游戏",
+          "value": "papegames.cn"
+        },
+        {
+          "name": "叠纸游戏",
+          "value": "papegames.com"
+        },
+        {
+          "name": "和平精英",
+          "value": "gp.qq.com"
+        },
+        {
+          "name": "哔哩哔哩游戏",
+          "value": "bilibiligame.com"
+        },
+        {
+          "name": "哔哩哔哩游戏",
+          "value": "biligame.com"
+        },
+        {
+          "name": "哔哩哔哩游戏",
+          "value": "biligame.net"
+        },
+        {
+          "name": "好游快爆",
+          "value": "3839.com"
+        },
+        {
+          "name": "好游快爆",
+          "value": "yxhimg.com"
+        },
+        {
+          "name": "守望先锋",
+          "value": "playoverwatch.com"
+        },
+        {
+          "name": "完美世界",
+          "value": "arcgames.cn"
+        },
+        {
+          "name": "完美世界",
+          "value": "pwesports.cn"
+        },
+        {
+          "name": "完美世界",
+          "value": "wanmei.com"
+        },
+        {
+          "name": "崩坏3",
+          "value": "honkaiimpact3.com"
+        },
+        {
+          "name": "崩坏：星穹铁道",
+          "value": "bhsr.com"
+        },
+        {
+          "name": "崩坏：星穹铁道",
+          "value": "starrails.com"
+        },
+        {
+          "name": "库洛游戏",
+          "value": "kurogame.com"
+        },
+        {
+          "name": "库洛游戏",
+          "value": "kurogames.com"
+        },
+        {
+          "name": "我的世界（网易）",
+          "value": "g79*.netease.com"
+        },
+        {
+          "name": "我的世界（网易）",
+          "value": "mc-launcher.webapp.163.com"
+        },
+        {
+          "name": "我的世界（网易）",
+          "value": "mc.163.com"
+        },
+        {
+          "name": "无畏契约",
+          "value": "val.qq.com"
+        },
+        {
+          "name": "无畏契约",
+          "value": "valm.qq.com"
+        },
+        {
+          "name": "暗区突围",
+          "value": "aqtw.qq.com"
+        },
+        {
+          "name": "暗区突围",
+          "value": "aqwx.qq.com"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "103.4.114.233"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "103.4.115.248"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "137.221.105.2"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "182.162.116.1"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "182.162.132.1"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "182.162.135.1"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "185.60.112.157"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "185.60.112.158"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "185.60.114.159"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "202.9.67.254"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "202.9.67.59"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "203.66.81.98"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "203.69.111.4"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "210.242.235.6"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "210.71.148.11"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "211.115.104.1"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "211.234.110.1"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "222.231.22.1"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "24.105.30.129"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "24.105.62.129"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "54.207.104.145"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "54.207.107.12"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "54.94.196.47"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "battle.net"
+        },
+        {
+          "name": "暴雪战网",
+          "value": "blizzard.cn"
+        },
+        {
+          "name": "暴雪游戏",
+          "value": "battlenet.com.cn"
+        },
+        {
+          "name": "暴雪游戏",
+          "value": "blizzard.com"
+        },
+        {
+          "name": "朝夕光年",
+          "value": "nvsgames.cn"
+        },
+        {
+          "name": "梦幻西游",
+          "value": "xyq.163.com"
+        },
+        {
+          "name": "森空岛",
+          "value": "skland.com"
+        },
+        {
+          "name": "永劫无间",
+          "value": "yjwujian.cn"
+        },
+        {
+          "name": "游戏加速器",
+          "value": "uu.163.com"
+        },
+        {
+          "name": "游戏加速器",
+          "value": "xunyou.com"
+        },
+        {
+          "name": "游戏加速器",
+          "value": "xunyou.mobi"
+        },
+        {
+          "name": "炉石传说",
+          "value": "playhearthstone.com"
+        },
+        {
+          "name": "王者荣耀",
+          "value": "pvp.qq.com"
+        },
+        {
+          "name": "王者荣耀",
+          "value": "smoba.qq.com"
+        },
+        {
+          "name": "穿越火线",
+          "value": "cf.qq.com"
+        },
+        {
+          "name": "第五人格",
+          "value": "id5.163.com"
+        },
+        {
+          "name": "米哈游",
+          "value": "mhystatic.com"
+        },
+        {
+          "name": "米哈游",
+          "value": "mhyurl.cn"
+        },
+        {
+          "name": "米哈游云",
+          "value": "mihoyocloud.com"
+        },
+        {
+          "name": "米哈游游戏",
+          "value": "bh3.com"
+        },
+        {
+          "name": "米哈游游戏",
+          "value": "hoyoverse.com"
+        },
+        {
+          "name": "米哈游游戏",
+          "value": "mihoyo.com"
+        },
+        {
+          "name": "米哈游游戏",
+          "value": "yuanshen.com"
+        },
+        {
+          "name": "米游社",
+          "value": "miyoushe.com"
+        },
+        {
+          "name": "绝区零",
+          "value": "juequling.com"
+        },
+        {
+          "name": "网易游戏",
+          "value": "adl.netease.com"
+        },
+        {
+          "name": "网易游戏",
+          "value": "aigame.netease.com"
+        },
+        {
+          "name": "网易游戏",
+          "value": "game.163.com"
+        },
+        {
+          "name": "网易游戏",
+          "value": "gdl.netease.com"
+        },
+        {
+          "name": "网易游戏",
+          "value": "gph.netease.com"
+        },
+        {
+          "name": "网易游戏",
+          "value": "res.netease.com"
+        },
+        {
+          "name": "网易游戏（通用）",
+          "value": "gsf.netease.com"
+        },
+        {
+          "name": "网易游戏（通用）",
+          "value": "matrix.netease.com"
+        },
+        {
+          "name": "网易游戏（通用）",
+          "value": "mkey.163.com"
+        },
+        {
+          "name": "网易游戏（通用）",
+          "value": "mpay.netease.com"
+        },
+        {
+          "name": "网易游戏（通用）",
+          "value": "nie.163.com"
+        },
+        {
+          "name": "网易游戏（通用）",
+          "value": "nie.netease.com"
+        },
+        {
+          "name": "腾讯游戏",
+          "value": "game.gtimg.cn"
+        },
+        {
+          "name": "腾讯游戏（通用）",
+          "value": "anticheatexpert.com"
+        },
+        {
+          "name": "腾讯游戏（通用）",
+          "value": "game.qq.com"
+        },
+        {
+          "name": "腾讯游戏（通用）",
+          "value": "gamesafe.qq.com"
+        },
+        {
+          "name": "腾讯游戏（通用）",
+          "value": "wetest.qq.com"
+        },
+        {
+          "name": "英雄联盟",
+          "value": "leagueoflegends.cn"
+        },
+        {
+          "name": "英雄联盟",
+          "value": "lol.qq.com"
+        },
+        {
+          "name": "英雄联盟手游",
+          "value": "lolm.qq.com"
+        },
+        {
+          "name": "莉莉丝游戏",
+          "value": "lilithcdn.com"
+        },
+        {
+          "name": "莉莉丝游戏",
+          "value": "lilithgame.com"
+        },
+        {
+          "name": "莉莉丝游戏",
+          "value": "lilithgames.com"
+        },
+        {
+          "name": "蒸汽平台",
+          "value": "csgo.wmsj.cn"
+        },
+        {
+          "name": "蒸汽平台",
+          "value": "dota2.wmsj.cn"
+        },
+        {
+          "name": "蒸汽平台",
+          "value": "steamchina.com"
+        },
+        {
+          "name": "蒸汽平台",
+          "value": "wmsjsteam.com"
+        },
+        {
+          "name": "蔚蓝档案",
+          "value": "bluearchive-cn.com"
+        },
+        {
+          "name": "虎牙游戏",
+          "value": "huyagame.cn"
+        },
+        {
+          "name": "蛋仔派对",
+          "value": "party.163.com"
+        },
+        {
+          "name": "西山居",
+          "value": "seasungames.cn"
+        },
+        {
+          "name": "西山居",
+          "value": "xoyo.com"
+        },
+        {
+          "name": "西山居",
+          "value": "xoyocdn.com"
+        },
+        {
+          "name": "逆水寒",
+          "value": "n.163.com"
+        },
+        {
+          "name": "金铲铲之战",
+          "value": "jcc.qq.com"
+        },
+        {
+          "name": "魔兽世界",
+          "value": "worldofwarcraft.com"
+        },
+        {
+          "name": "鸣潮",
+          "value": "aki-game.com"
+        },
+        {
+          "name": "鸣潮",
+          "value": "aki-game.net"
+        },
+        {
+          "name": "鹰角网络",
+          "value": "hycdn.cn"
+        },
+        {
+          "name": "鹰角网络",
+          "value": "hycdn.com"
+        },
+        {
+          "name": "鹰角网络",
+          "value": "hypergryph.com"
+        },
+        {
+          "name": "鹰角网络",
+          "value": "hypergryph.net"
+        }
+      ]
+    },
+    {
+      "id": "shortvideo",
+      "name": "短视频",
+      "entries": [
+        {
+          "name": "TikTok",
+          "value": "muscdn.com"
+        },
+        {
+          "name": "TikTok",
+          "value": "tiktok.com"
+        },
+        {
+          "name": "TikTok",
+          "value": "tiktokcdn.com"
+        },
+        {
+          "name": "TikTok",
+          "value": "tiktokv.com"
+        },
+        {
+          "name": "微信视频号",
+          "value": "channels.weixin.qq.com"
+        },
+        {
+          "name": "微信视频号",
+          "value": "finder.video.qq.com"
+        },
+        {
+          "name": "快手",
+          "value": "gifshow.com"
+        },
+        {
+          "name": "快手",
+          "value": "ksapisrv.com"
+        },
+        {
+          "name": "快手",
+          "value": "kuaishou.com"
+        },
+        {
+          "name": "快手",
+          "value": "kwai.com"
+        },
+        {
+          "name": "快手",
+          "value": "kwaicdn.com"
+        },
+        {
+          "name": "快手",
+          "value": "yximgs.com"
+        },
+        {
+          "name": "抖音",
+          "value": "amemv.com"
+        },
+        {
+          "name": "抖音",
+          "value": "aweme.snssdk.com"
+        },
+        {
+          "name": "抖音",
+          "value": "douyin.com"
+        },
+        {
+          "name": "抖音",
+          "value": "douyincdn.com"
+        },
+        {
+          "name": "抖音",
+          "value": "douyinpic.com"
+        },
+        {
+          "name": "抖音",
+          "value": "douyinstatic.com"
+        },
+        {
+          "name": "抖音",
+          "value": "douyinvod.com"
+        },
+        {
+          "name": "抖音",
+          "value": "idouyinvod.com"
+        },
+        {
+          "name": "抖音",
+          "value": "iesdouyin.com"
+        },
+        {
+          "name": "皮皮虾",
+          "value": "pipix.com"
+        },
+        {
+          "name": "红果短剧",
+          "value": "hongguo.com"
+        },
+        {
+          "name": "红果短剧",
+          "value": "novelquickapp.com"
+        }
+      ]
+    },
+    {
+      "id": "video",
+      "name": "视频",
+      "entries": [
+        {
+          "name": "AcFun",
+          "value": "acfun.cn"
+        },
+        {
+          "name": "Netflix",
+          "value": "netflix.com"
+        },
+        {
+          "name": "Netflix",
+          "value": "nflxso.net"
+        },
+        {
+          "name": "Netflix",
+          "value": "nflxvideo.net"
+        },
+        {
+          "name": "PPTV",
+          "value": "pptv.com"
+        },
+        {
+          "name": "YouTube",
+          "value": "googlevideo.com"
+        },
+        {
+          "name": "YouTube",
+          "value": "youtube-nocookie.com"
+        },
+        {
+          "name": "YouTube",
+          "value": "youtube.com"
+        },
+        {
+          "name": "YouTube",
+          "value": "youtubei.googleapis.com"
+        },
+        {
+          "name": "YouTube",
+          "value": "ytimg.com"
+        },
+        {
+          "name": "云视听极光",
+          "value": "aisee.tv"
+        },
+        {
+          "name": "云视听极光",
+          "value": "atianqi.com"
+        },
+        {
+          "name": "优酷",
+          "value": "cibntv.net"
+        },
+        {
+          "name": "优酷",
+          "value": "soku.com"
+        },
+        {
+          "name": "优酷",
+          "value": "tudou.com"
+        },
+        {
+          "name": "优酷",
+          "value": "ykimg.com"
+        },
+        {
+          "name": "优酷",
+          "value": "youku.com"
+        },
+        {
+          "name": "咪咕视频",
+          "value": "cmvideo.cn"
+        },
+        {
+          "name": "咪咕视频",
+          "value": "miguvideo.com"
+        },
+        {
+          "name": "哔哩哔哩",
+          "value": "biliapi.com"
+        },
+        {
+          "name": "哔哩哔哩",
+          "value": "biliapi.net"
+        },
+        {
+          "name": "哔哩哔哩",
+          "value": "bilibili.com"
+        },
+        {
+          "name": "哔哩哔哩",
+          "value": "bilivideo.cn"
+        },
+        {
+          "name": "哔哩哔哩",
+          "value": "bilivideo.com"
+        },
+        {
+          "name": "哔哩哔哩",
+          "value": "hdslb.com"
+        },
+        {
+          "name": "央视频",
+          "value": "yangshipin.cn"
+        },
+        {
+          "name": "搜狐视频",
+          "value": "tv.sohu.com"
+        },
+        {
+          "name": "爱奇艺",
+          "value": "71.am"
+        },
+        {
+          "name": "爱奇艺",
+          "value": "iq.com"
+        },
+        {
+          "name": "爱奇艺",
+          "value": "iqiyi.com"
+        },
+        {
+          "name": "爱奇艺",
+          "value": "iqiyipic.com"
+        },
+        {
+          "name": "爱奇艺",
+          "value": "pps.tv"
+        },
+        {
+          "name": "爱奇艺",
+          "value": "ppsimg.com"
+        },
+        {
+          "name": "爱奇艺",
+          "value": "qiyi.com"
+        },
+        {
+          "name": "爱奇艺",
+          "value": "qy.net"
+        },
+        {
+          "name": "腾讯视频",
+          "value": "qqvideo.gtimg.com"
+        },
+        {
+          "name": "腾讯视频",
+          "value": "v.qq.com"
+        },
+        {
+          "name": "腾讯视频",
+          "value": "video.qq.com"
+        },
+        {
+          "name": "芒果TV",
+          "value": "hitv.com"
+        },
+        {
+          "name": "芒果TV",
+          "value": "hunantv.com"
+        },
+        {
+          "name": "芒果TV",
+          "value": "imgo.tv"
+        },
+        {
+          "name": "芒果TV",
+          "value": "mgtv.com"
+        },
+        {
+          "name": "西瓜视频",
+          "value": "ixigua.com"
+        },
+        {
+          "name": "银河奇异果",
+          "value": "gitv.tv"
+        }
+      ]
+    },
+    {
+      "id": "live",
+      "name": "直播",
+      "entries": [
+        {
+          "name": "Twitch",
+          "value": "jtvnw.net"
+        },
+        {
+          "name": "Twitch",
+          "value": "ttvnw.net"
+        },
+        {
+          "name": "Twitch",
+          "value": "twitch.tv"
+        },
+        {
+          "name": "YY直播",
+          "value": "yy.com"
+        },
+        {
+          "name": "斗鱼",
+          "value": "douyu.com"
+        },
+        {
+          "name": "斗鱼",
+          "value": "douyu.tv"
+        },
+        {
+          "name": "斗鱼",
+          "value": "douyucdn.cn"
+        },
+        {
+          "name": "斗鱼",
+          "value": "douyucdn2.cn"
+        },
+        {
+          "name": "斗鱼",
+          "value": "douyutv.com"
+        },
+        {
+          "name": "映客",
+          "value": "inke.cn"
+        },
+        {
+          "name": "网易CC",
+          "value": "cc.163.com"
+        },
+        {
+          "name": "花椒直播",
+          "value": "huajiao.com"
+        },
+        {
+          "name": "虎牙",
+          "value": "huya.com"
+        },
+        {
+          "name": "虎牙",
+          "value": "msstatic.com"
+        }
+      ]
+    },
+    {
+      "id": "music",
+      "name": "音乐音频",
+      "entries": [
+        {
+          "name": "QQ音乐",
+          "value": "qqmusic.qq.com"
+        },
+        {
+          "name": "QQ音乐",
+          "value": "y.qq.com"
+        },
+        {
+          "name": "Spotify",
+          "value": "scdn.co"
+        },
+        {
+          "name": "Spotify",
+          "value": "spotify.com"
+        },
+        {
+          "name": "喜马拉雅",
+          "value": "ximalaya.com"
+        },
+        {
+          "name": "喜马拉雅",
+          "value": "xmcdn.com"
+        },
+        {
+          "name": "懒人听书",
+          "value": "lrts.me"
+        },
+        {
+          "name": "汽水音乐",
+          "value": "qishui.com"
+        },
+        {
+          "name": "番茄畅听",
+          "value": "novelfm.com"
+        },
+        {
+          "name": "网易云音乐",
+          "value": "music.126.net"
+        },
+        {
+          "name": "网易云音乐",
+          "value": "music.163.com"
+        },
+        {
+          "name": "荔枝FM",
+          "value": "lizhi.fm"
+        },
+        {
+          "name": "蜻蜓FM",
+          "value": "qtfm.cn"
+        },
+        {
+          "name": "酷我音乐",
+          "value": "kuwo.cn"
+        },
+        {
+          "name": "酷狗音乐",
+          "value": "kugou.com"
+        }
+      ]
+    },
+    {
+      "id": "social",
+      "name": "社交聊天",
+      "entries": [
+        {
+          "name": "Discord",
+          "value": "discord.com"
+        },
+        {
+          "name": "QQ",
+          "value": "im.qq.com"
+        },
+        {
+          "name": "QQ",
+          "value": "qlogo.cn"
+        },
+        {
+          "name": "QQ",
+          "value": "qzone.qq.com"
+        },
+        {
+          "name": "Soul",
+          "value": "soulapp.cn"
+        },
+        {
+          "name": "TIM",
+          "value": "tim.qq.com"
+        },
+        {
+          "name": "Telegram",
+          "value": "telegram.org"
+        },
+        {
+          "name": "小红书",
+          "value": "xhscdn.com"
+        },
+        {
+          "name": "小红书",
+          "value": "xhslink.com"
+        },
+        {
+          "name": "小红书",
+          "value": "xiaohongshu.com"
+        },
+        {
+          "name": "微信",
+          "value": "mmbiz.qpic.cn"
+        },
+        {
+          "name": "微信",
+          "value": "servicewechat.com"
+        },
+        {
+          "name": "微信",
+          "value": "wechat.com"
+        },
+        {
+          "name": "微信",
+          "value": "weixin.qq.com"
+        },
+        {
+          "name": "微信",
+          "value": "weixinbridge.com"
+        },
+        {
+          "name": "微信",
+          "value": "wx.qq.com"
+        },
+        {
+          "name": "微信",
+          "value": "wxs.qq.com"
+        },
+        {
+          "name": "微博",
+          "value": "sinaimg.cn"
+        },
+        {
+          "name": "微博",
+          "value": "weibo.cn"
+        },
+        {
+          "name": "微博",
+          "value": "weibo.com"
+        },
+        {
+          "name": "虎扑",
+          "value": "hupu.com"
+        },
+        {
+          "name": "钉钉",
+          "value": "dingtalk.com"
+        },
+        {
+          "name": "陌陌",
+          "value": "immomo.com"
+        },
+        {
+          "name": "飞书",
+          "value": "feishu.cn"
+        }
+      ]
+    },
+    {
+      "id": "edu",
+      "name": "学习教育",
+      "entries": [
+        {
+          "name": "ClassIn",
+          "value": "classin.com"
+        },
+        {
+          "name": "一起作业",
+          "value": "17zuoye.com"
+        },
+        {
+          "name": "万方数据",
+          "value": "wanfangdata.com.cn"
+        },
+        {
+          "name": "中国大学MOOC",
+          "value": "icourse163.org"
+        },
+        {
+          "name": "中国知网",
+          "value": "cnki.net"
+        },
+        {
+          "name": "作业帮",
+          "value": "zuoyebang.cc"
+        },
+        {
+          "name": "作业帮",
+          "value": "zuoyebang.com"
+        },
+        {
+          "name": "作业帮",
+          "value": "zybang.com"
+        },
+        {
+          "name": "国家中小学智慧教育",
+          "value": "zxx.edu.cn"
+        },
+        {
+          "name": "国家智慧教育平台",
+          "value": "smartedu.cn"
+        },
+        {
+          "name": "学习通",
+          "value": "chaoxing.com"
+        },
+        {
+          "name": "学而思",
+          "value": "xesimg.com"
+        },
+        {
+          "name": "学而思",
+          "value": "xueersi.com"
+        },
+        {
+          "name": "扇贝",
+          "value": "shanbay.com"
+        },
+        {
+          "name": "新东方",
+          "value": "xdf.cn"
+        },
+        {
+          "name": "洋葱学园",
+          "value": "yangcong345.com"
+        },
+        {
+          "name": "猿辅导",
+          "value": "fenbi.com"
+        },
+        {
+          "name": "猿辅导",
+          "value": "yuanfudao.com"
+        },
+        {
+          "name": "百词斩",
+          "value": "baicizhan.com"
+        },
+        {
+          "name": "网易有道",
+          "value": "ydstatic.com"
+        },
+        {
+          "name": "网易有道",
+          "value": "youdao.com"
+        },
+        {
+          "name": "腾讯会议",
+          "value": "meeting.tencent.com"
+        },
+        {
+          "name": "高途",
+          "value": "gaotu.cn"
+        }
+      ]
+    },
+    {
+      "id": "shopping",
+      "name": "购物生活",
+      "entries": [
+        {
+          "name": "1688",
+          "value": "1688.com"
+        },
+        {
+          "name": "京东",
+          "value": "360buyimg.com"
+        },
+        {
+          "name": "京东",
+          "value": "jd.com"
+        },
+        {
+          "name": "什么值得买",
+          "value": "smzdm.com"
+        },
+        {
+          "name": "叮咚买菜",
+          "value": "100.me"
+        },
+        {
+          "name": "唯品会",
+          "value": "appsimg.com"
+        },
+        {
+          "name": "唯品会",
+          "value": "appvipshop.com"
+        },
+        {
+          "name": "唯品会",
+          "value": "vip.com"
+        },
+        {
+          "name": "唯品会",
+          "value": "vipglobal.hk"
+        },
+        {
+          "name": "唯品会",
+          "value": "vipstatic.com"
+        },
+        {
+          "name": "大众点评",
+          "value": "dianping.com"
+        },
+        {
+          "name": "当当",
+          "value": "dangdang.com"
+        },
+        {
+          "name": "得物",
+          "value": "dewu.com"
+        },
+        {
+          "name": "拼多多",
+          "value": "pddpic.com"
+        },
+        {
+          "name": "拼多多",
+          "value": "pinduoduo.com"
+        },
+        {
+          "name": "拼多多",
+          "value": "yangkeduo.com"
+        },
+        {
+          "name": "支付宝",
+          "value": "alipay.com"
+        },
+        {
+          "name": "淘宝天猫",
+          "value": "alicdn.com"
+        },
+        {
+          "name": "淘宝天猫",
+          "value": "taobao.com"
+        },
+        {
+          "name": "淘宝天猫",
+          "value": "tmall.com"
+        },
+        {
+          "name": "盒马",
+          "value": "freshhema.com"
+        },
+        {
+          "name": "美团",
+          "value": "meituan.com"
+        },
+        {
+          "name": "美团",
+          "value": "meituan.net"
+        },
+        {
+          "name": "苏宁易购",
+          "value": "suning.com"
+        },
+        {
+          "name": "闲鱼",
+          "value": "goofish.com"
+        },
+        {
+          "name": "飞猪",
+          "value": "fliggy.com"
+        },
+        {
+          "name": "饿了么",
+          "value": "ele.me"
+        }
+      ]
+    },
+    {
+      "id": "info",
+      "name": "资讯搜索",
+      "entries": [
+        {
+          "name": "中国天气",
+          "value": "weather.com.cn"
+        },
+        {
+          "name": "今日头条",
+          "value": "pstatp.com"
+        },
+        {
+          "name": "今日头条",
+          "value": "toutiao.com"
+        },
+        {
+          "name": "去哪儿",
+          "value": "qunar.com"
+        },
+        {
+          "name": "夸克",
+          "value": "quark.cn"
+        },
+        {
+          "name": "必应",
+          "value": "bing.com"
+        },
+        {
+          "name": "搜狗",
+          "value": "sogou.com"
+        },
+        {
+          "name": "携程",
+          "value": "ctrip.com"
+        },
+        {
+          "name": "新浪",
+          "value": "sina.cn"
+        },
+        {
+          "name": "新浪",
+          "value": "sina.com.cn"
+        },
+        {
+          "name": "澎湃新闻",
+          "value": "thepaper.cn"
+        },
+        {
+          "name": "百度",
+          "value": "baidu.com"
+        },
+        {
+          "name": "百度",
+          "value": "bdimg.com"
+        },
+        {
+          "name": "百度",
+          "value": "bdstatic.com"
+        },
+        {
+          "name": "知乎",
+          "value": "zhihu.com"
+        },
+        {
+          "name": "知乎",
+          "value": "zhimg.com"
+        },
+        {
+          "name": "网易新闻",
+          "value": "news.163.com"
+        },
+        {
+          "name": "腾讯新闻",
+          "value": "news.qq.com"
+        },
+        {
+          "name": "谷歌",
+          "value": "google.com"
+        },
+        {
+          "name": "谷歌",
+          "value": "gstatic.com"
+        },
+        {
+          "name": "豆瓣",
+          "value": "douban.com"
+        },
+        {
+          "name": "铁路 12306",
+          "value": "12306.cn"
+        },
+        {
+          "name": "高德地图",
+          "value": "amap.com"
+        },
+        {
+          "name": "高德地图",
+          "value": "autonavi.com"
+        }
+      ]
+    },
+    {
+      "id": "system",
+      "name": "系统与应用商店",
+      "entries": [
+        {
+          "name": "App Store",
+          "value": "apps.apple.com"
+        },
+        {
+          "name": "App Store",
+          "value": "itunes.apple.com"
+        },
+        {
+          "name": "Google Play",
+          "value": "play.google.com"
+        },
+        {
+          "name": "OPPO服务",
+          "value": "heytap.com"
+        },
+        {
+          "name": "OPPO服务",
+          "value": "heytapmobi.com"
+        },
+        {
+          "name": "OPPO服务",
+          "value": "oppomobile.com"
+        },
+        {
+          "name": "vivo服务",
+          "value": "vivo.com"
+        },
+        {
+          "name": "vivo服务",
+          "value": "vivo.com.cn"
+        },
+        {
+          "name": "一加",
+          "value": "oneplus.com"
+        },
+        {
+          "name": "三星",
+          "value": "samsung.com"
+        },
+        {
+          "name": "华为服务",
+          "value": "dbankcdn.com"
+        },
+        {
+          "name": "华为服务",
+          "value": "dbankcloud.com"
+        },
+        {
+          "name": "华为服务",
+          "value": "hicloud.com"
+        },
+        {
+          "name": "华为服务",
+          "value": "huawei.com"
+        },
+        {
+          "name": "小米服务",
+          "value": "mi-img.com"
+        },
+        {
+          "name": "小米服务",
+          "value": "mi.com"
+        },
+        {
+          "name": "小米服务",
+          "value": "miui.com"
+        },
+        {
+          "name": "小米服务",
+          "value": "xiaomi.com"
+        },
+        {
+          "name": "小米服务",
+          "value": "xiaomi.net"
+        },
+        {
+          "name": "应用宝",
+          "value": "myapp.com"
+        },
+        {
+          "name": "应用宝",
+          "value": "sj.qq.com"
+        },
+        {
+          "name": "微软服务",
+          "value": "live.com"
+        },
+        {
+          "name": "微软服务",
+          "value": "microsoft.com"
+        },
+        {
+          "name": "微软服务",
+          "value": "msftconnecttest.com"
+        },
+        {
+          "name": "微软服务",
+          "value": "office.com"
+        },
+        {
+          "name": "微软服务",
+          "value": "windowsupdate.com"
+        },
+        {
+          "name": "联想服务",
+          "value": "lenovo.com"
+        },
+        {
+          "name": "联想服务",
+          "value": "lenovo.com.cn"
+        },
+        {
+          "name": "联想服务",
+          "value": "lenovomm.cn"
+        },
+        {
+          "name": "联想服务",
+          "value": "lenovomm.com"
+        },
+        {
+          "name": "腾讯定位服务",
+          "value": "map.qq.com"
+        },
+        {
+          "name": "苹果服务",
+          "value": "aaplimg.com"
+        },
+        {
+          "name": "苹果服务",
+          "value": "apple-cloudkit.com"
+        },
+        {
+          "name": "苹果服务",
+          "value": "apple.com"
+        },
+        {
+          "name": "苹果服务",
+          "value": "cdn-apple.com"
+        },
+        {
+          "name": "苹果服务",
+          "value": "icloud-content.com"
+        },
+        {
+          "name": "苹果服务",
+          "value": "icloud.com"
+        },
+        {
+          "name": "苹果服务",
+          "value": "mzstatic.com"
+        },
+        {
+          "name": "荣耀服务",
+          "value": "hihonor.com"
+        },
+        {
+          "name": "荣耀服务",
+          "value": "hihonorcloud.com"
+        },
+        {
+          "name": "酷安",
+          "value": "coolapk.com"
+        },
+        {
+          "name": "酷开系统",
+          "value": "coocaa.com"
+        },
+        {
+          "name": "酷开系统",
+          "value": "skyworth.com"
+        },
+        {
+          "name": "魅族",
+          "value": "meizu.com"
+        }
+      ]
+    },
+    {
+      "id": "iot",
+      "name": "智能设备",
+      "entries": [
+        {
+          "name": "Yeelight",
+          "value": "yeelight.com"
+        },
+        {
+          "name": "博联",
+          "value": "ibroadlink.com"
+        },
+        {
+          "name": "天猫精灵",
+          "value": "aligenie.com"
+        },
+        {
+          "name": "小度",
+          "value": "xiaodu.com"
+        },
+        {
+          "name": "涂鸦智能",
+          "value": "tuya.com"
+        },
+        {
+          "name": "涂鸦智能",
+          "value": "tuyacn.com"
+        },
+        {
+          "name": "米家",
+          "value": "io.mi.com"
+        },
+        {
+          "name": "米家",
+          "value": "miot-spec.org"
+        },
+        {
+          "name": "绿米Aqara",
+          "value": "aqara.cn"
+        },
+        {
+          "name": "萤石云",
+          "value": "ezviz.com"
+        },
+        {
+          "name": "萤石云",
+          "value": "ezvizlife.com"
+        },
+        {
+          "name": "萤石云",
+          "value": "hik*.aliyuncs.com"
+        },
+        {
+          "name": "萤石云",
+          "value": "hik*.myqcloud.com"
+        },
+        {
+          "name": "萤石云",
+          "value": "ys7.com"
+        }
+      ]
+    },
+    {
+      "id": "ads",
+      "name": "广告统计",
+      "entries": [
+        {
+          "name": "友盟统计",
+          "value": "umeng.com"
+        },
+        {
+          "name": "友盟统计",
+          "value": "umengcloud.com"
+        },
+        {
+          "name": "字节统计",
+          "value": "ctobsnssdk.com"
+        },
+        {
+          "name": "字节统计",
+          "value": "log.snssdk.com"
+        },
+        {
+          "name": "字节统计",
+          "value": "mon.snssdk.com"
+        },
+        {
+          "name": "巨量引擎",
+          "value": "oceanengine.com"
+        },
+        {
+          "name": "百度推广",
+          "value": "pos.baidu.com"
+        },
+        {
+          "name": "秒针监测",
+          "value": "miaozhen.com"
+        },
+        {
+          "name": "穿山甲广告",
+          "value": "pangolin-sdk-toutiao-b.com"
+        },
+        {
+          "name": "穿山甲广告",
+          "value": "pangolin-sdk-toutiao.com"
+        },
+        {
+          "name": "穿山甲广告",
+          "value": "pglstatp-toutiao.com"
+        },
+        {
+          "name": "腾讯广告",
+          "value": "e.qq.com"
+        },
+        {
+          "name": "腾讯广告",
+          "value": "gdt.qq.com"
+        },
+        {
+          "name": "谷歌广告",
+          "value": "app-measurement.com"
+        },
+        {
+          "name": "谷歌广告",
+          "value": "doubleclick.net"
+        },
+        {
+          "name": "谷歌广告",
+          "value": "googleadservices.com"
+        },
+        {
+          "name": "谷歌广告",
+          "value": "googlesyndication.com"
+        },
+        {
+          "name": "阿里妈妈",
+          "value": "alimama.com"
+        },
+        {
+          "name": "阿里妈妈",
+          "value": "tanx.com"
+        }
+      ]
+    },
+    {
+      "id": "other",
+      "name": "其他",
+      "entries": [
+        {
+          "name": "微信读书",
+          "value": "weread.qq.com"
+        },
+        {
+          "name": "番茄小说",
+          "value": "fanqienovel.com"
+        },
+        {
+          "name": "番茄小说",
+          "value": "fqnovel.com"
+        }
+      ]
+    },
+    {
+      "id": "unknown",
+      "name": "未识别",
+      "entries": []
+    }
+  ]
+}

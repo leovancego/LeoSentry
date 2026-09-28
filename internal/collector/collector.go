@@ -65,6 +65,33 @@ func New(opts Options) *Collector {
 	return c
 }
 
+// SetMinBytesPerMinute 修改每分钟最小记录流量（字节）。0 表示不过滤。下一次采集按当前周期折算。
+func (c *Collector) SetMinBytesPerMinute(n int64) {
+	if c == nil || n < 0 {
+		return
+	}
+	c.mu.Lock()
+	c.perMin = n
+	every := c.every
+	if every <= 0 {
+		every = c.opts.Interval
+	}
+	if every > 0 {
+		c.minFlow = n * int64(every) / int64(time.Minute)
+	}
+	c.mu.Unlock()
+}
+
+// BytesPerMinute 返回当前的每分钟最小记录流量（字节）。
+func (c *Collector) BytesPerMinute() int64 {
+	if c == nil {
+		return 0
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.perMin
+}
+
 // SetInterval 修改采集周期。下一次采集按新间隔对齐，过滤阈值按每分钟字节数折算。
 func (c *Collector) SetInterval(d time.Duration) {
 	if c == nil || d < time.Second || d > time.Hour {

@@ -157,18 +157,18 @@ go run ./scripts/devweb
 
 ## 下载
 
-当前版本 **V1.0.2**，适用于 ImmortalWrt / OpenWrt 的 linux/arm64（如 NanoPi R2S）。发布包放在 GitHub Release 上，不进入 git 仓库。
+当前版本 **V1.0.3**，适用于 ImmortalWrt / OpenWrt 的 linux/arm64（如 NanoPi R2S）。发布包放在 GitHub Release 上，不进入 git 仓库。
 
-[下载 leosentry-linux-arm64](https://github.com/leovancego/LeoSentry/releases/download/V1.0.2/leosentry-linux-arm64)
+[下载 leosentry-linux-arm64](https://github.com/leovancego/LeoSentry/releases/download/V1.0.3/leosentry-linux-arm64)
 
-[查看 V1.0.2 发布说明](https://github.com/leovancego/LeoSentry/releases/tag/V1.0.2)
+[查看 V1.0.3 发布说明](https://github.com/leovancego/LeoSentry/releases/tag/V1.0.3)
 
 ## 安装到软路由
 
 在路由器上：
 
 ```sh
-wget -O /tmp/leosentry https://github.com/leovancego/LeoSentry/releases/download/V1.0.2/leosentry-linux-arm64
+wget -O /tmp/leosentry https://github.com/leovancego/LeoSentry/releases/download/V1.0.3/leosentry-linux-arm64
 chmod +x /tmp/leosentry && /tmp/leosentry install
 ```
 
@@ -205,7 +205,7 @@ ssh root@192.168.1.1 'chmod +x /tmp/leosentry && /tmp/leosentry install'
 | `policy_interval`            | `300`      | 自动检查策略的间隔（秒）                               |
 | `conntrack_interval`         | `10`       | 刷新在线状态的间隔（秒）                               |
 | `rotate_at`                  | `03:00`    | 统计日分界                                      |
-| `min_flow_kb_per_min`        | `8`        | 低于该速率的「设备 → 目标」不记录；`0` 表示全记                |
+| `min_flow_kb_per_min`        | `8`        | 低于该速率（KB/分钟）的「设备 → 目标」不记录；`0` 表示全记。也可在系统设置里改，保存后立刻生效 |
 | `min_free_mb`                | `20`       | 数据分区剩余空间低于该值时暂停写明细                         |
 | `managed_network`            | 空          | 受管网段，可写多条；空则用 `lan_device` 上的 IPv4         |
 | `lan_device`                 | `br-lan`   | LAN 接口                                     |

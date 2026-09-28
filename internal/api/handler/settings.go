@@ -18,7 +18,7 @@ const maxCategoryFile = 256 << 10
 // SettingsAPI 是系统设置页的读写。
 type SettingsAPI interface {
 	View(ctx context.Context) (settings.View, error)
-	SaveTiming(ctx context.Context, collect, policySec int, rotate string) (settings.View, error)
+	SaveTiming(ctx context.Context, collect, policySec, minFlowKB int, rotate string) (settings.View, error)
 	AddRule(ctx context.Context, category, value string) (settings.View, error)
 	RemoveRule(ctx context.Context, category, value string) (settings.View, error)
 	ExportCategories(ctx context.Context) ([]byte, error)
@@ -101,15 +101,21 @@ func portFromJSON(raw json.RawMessage) (int, error) {
 
 func (h Settings) timing(w http.ResponseWriter, r *http.Request) {
 	var body struct {
-		CollectSeconds int    `json:"collectSeconds"`
-		PolicySeconds  int    `json:"policySeconds"`
-		RotateAt       string `json:"rotateAt"`
+		CollectSeconds int             `json:"collectSeconds"`
+		PolicySeconds  int             `json:"policySeconds"`
+		MinFlowKB      json.RawMessage `json:"minFlowKB"`
+		RotateAt       string          `json:"rotateAt"`
 	}
 	if err := json.NewDecoder(io.LimitReader(r.Body, maxSmallBody)).Decode(&body); err != nil {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "设置格式不正确"})
 		return
 	}
-	view, err := h.API.SaveTiming(r.Context(), body.CollectSeconds, body.PolicySeconds, body.RotateAt)
+	minFlowKB, err := portFromJSON(body.MinFlowKB)
+	if err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "忽略流量要是 0 到 1024 的整数"})
+		return
+	}
+	view, err := h.API.SaveTiming(r.Context(), body.CollectSeconds, body.PolicySeconds, minFlowKB, body.RotateAt)
 	h.write(w, view, err)
 }
 

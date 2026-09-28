@@ -240,6 +240,9 @@ func Run(ctx context.Context, cfg config.Config, log *slog.Logger) error {
 	})
 	pref := settings.Bind(pdb, live, usage, col, eng, fmt.Sprintf("%02d:%02d", cfg.RotateHour, cfg.RotateMinute))
 	pref.UseTLS(cfg.TLSCertFile, cfg.TLSKeyFile, cfg.HTTPPort, cfg.HTTPSPort)
+	if overview != nil {
+		pref.UseMinFlowHint(overview)
+	}
 	if webUIEnabled(cfg) {
 		if err := startWebUI(ctx, &wg, cfg, overview, catalog, eng, pref, pdb, log); err != nil {
 			log.Error("web ui disabled", "err", err)

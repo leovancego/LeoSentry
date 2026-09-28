@@ -101,6 +101,17 @@ func NewBuilder(opts Options) *Builder {
 	}
 }
 
+// SetMinFlowBytesPerMinute 更新概览里展示的过滤阈值，并丢掉已缓存的快照。
+func (b *Builder) SetMinFlowBytesPerMinute(n int64) {
+	if b == nil || n < 0 {
+		return
+	}
+	b.mu.Lock()
+	b.opts.MinFlowBytesPerMinute = n
+	b.cached = map[string]*Snapshot{}
+	b.mu.Unlock()
+}
+
 // Snapshot 返回今天或昨天的概览快照。which 不是 yesterday 时按今天处理。
 func (b *Builder) Snapshot(ctx context.Context, which string) (*Snapshot, error) {
 	if which != "yesterday" {

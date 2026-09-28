@@ -158,16 +158,28 @@ function tlsHTML() {
 
 function timingHTML() {
   const t = settings;
+  const pending = t.rotatePending ? '<p class="zone-note">当前还在用原来的切换时刻，重新启动后才按新时刻计算。</p>' : '';
   return `<section class="zone">
     <div class="zone-title"><h2>采集与检查</h2></div>
     <form id="timeForm" class="settings-form">
-      <p class="zone-note">单位：秒。采集间隔和策略检查保存后立刻生效。</p>
-      <div class="time-grid">
-        <label>网络行为采集<input class="search num-input" id="collectSec" name="collect" type="number" min="1" max="3600" step="1" required value="${esc(t.collectSeconds)}"></label>
-        <label>自动检查策略<input class="search num-input" id="policySec" name="policy" type="number" min="1" max="3600" step="1" required value="${esc(t.policySeconds)}"></label>
-        <label>统计日切换<input class="search" id="rotateAt" name="rotate" type="time" required value="${esc(t.rotateAt || '03:00')}"></label>
+      <div class="set-block">
+        <h3>采集</h3>
+        <p class="zone-note">每隔这么久记一次谁在访问什么。保存后立刻生效。</p>
+        <label class="unit-line">采集间隔<input class="search num-input" id="collectSec" name="collect" inputmode="numeric" required value="${esc(t.collectSeconds)}" autocomplete="off"><span class="unit-suffix">秒</span></label>
+        <label class="unit-line">忽略低于<input class="search num-input" id="minFlowKB" name="minFlow" inputmode="numeric" required value="${esc(t.minFlowKB ?? 8)}" autocomplete="off"><span class="unit-suffix">KB/分钟</span></label>
+        <p class="zone-note">一个采集周期里，某台设备访问某个目标的上下行合计低于这个速度，就不记下来。用来去掉心跳和推送，避免后台挂着的应用被算成正在上网，也少占存储。建议 4～16，默认 8。填 0 则全部记录。设得太高，正常浏览也会被漏掉。</p>
       </div>
-      <p class="zone-note">统计日切换保存后，要到「重启」里重新启动服务才生效。${t.rotatePending ? '当前还在用原来的切换时刻。' : ''}</p>
+      <div class="set-block">
+        <h3>策略检查</h3>
+        <p class="zone-note">按这个间隔检查时长和时段，需要时更新防火墙。保存后立刻生效。</p>
+        <label class="unit-line">检查间隔<input class="search num-input" id="policySec" name="policy" inputmode="numeric" required value="${esc(t.policySeconds)}" autocomplete="off"><span class="unit-suffix">秒</span></label>
+      </div>
+      <div class="set-block">
+        <h3>统计日</h3>
+        <p class="zone-note">从这个时刻起算新的一天。保存后要重新启动服务才生效。</p>
+        <label class="unit-line">切换时刻<input class="search" id="rotateAt" name="rotate" type="time" required value="${esc(t.rotateAt || '03:00')}"></label>
+        ${pending}
+      </div>
       <div class="settings-actions"><button class="btn primary" type="submit">保存</button></div>
       <div class="form-err" id="timeErr"></div>
     </form>
@@ -213,7 +225,7 @@ function restartHTML() {
   return `<section class="zone">
     <div class="zone-title"><h2>重启服务</h2></div>
     ${pending}
-    <p class="zone-note">类别名单、日历、采集间隔、策略检查和登录密码保存后马上生效。统计日切换要等重新启动。端口和 HTTPS 证书若和当前加载的不一致，在「端口与证书」页确认后会自动重启。</p>
+    <p class="zone-note">类别名单、日历、采集间隔、忽略流量、策略检查和登录密码保存后马上生效。统计日切换要等重新启动。端口和 HTTPS 证书若和当前加载的不一致，在「端口与证书」页确认后会自动重启。</p>
     <p class="zone-note">重启会先把没采集完的流量补写进库，再按平时的方式把服务启动起来。中间几秒打不开这个页面。</p>
     <div class="settings-actions">
       <button class="btn danger" type="button" id="restartBtn">重新启动</button>
@@ -458,14 +470,34 @@ async function saveTLS(form) {
   }
 }
 
+function parseRange(raw, max) {
+  const s = String(raw ?? '').trim();
+  if (!/^[0-9]{1,4}$/.test(s)) return null;
+  const n = Number(s);
+  if (n > max) return null;
+  return n;
+}
+
 async function saveTiming(form) {
   const fd = new FormData(form);
   const err = document.getElementById('timeErr');
   err.textContent = '';
+  const collect = parseRange(fd.get('collect'), 3600);
+  const policy = parseRange(fd.get('policy'), 3600);
+  const minFlow = parseRange(fd.get('minFlow'), 1024);
+  if (collect == null || collect < 1 || policy == null || policy < 1) {
+    err.textContent = '间隔要是 1 到 3600 的整数';
+    return;
+  }
+  if (minFlow == null) {
+    err.textContent = '忽略流量要是 0 到 1024 的整数，建议 4～16';
+    return;
+  }
   try {
     settings = await send(SET + '/timing', 'PUT', {
-      collectSeconds: Number(fd.get('collect')),
-      policySeconds: Number(fd.get('policy')),
+      collectSeconds: collect,
+      policySeconds: policy,
+      minFlowKB: minFlow,
       rotateAt: fd.get('rotate'),
     });
     error = '';

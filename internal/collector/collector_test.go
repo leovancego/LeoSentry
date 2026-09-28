@@ -127,3 +127,15 @@ func TestCollectDropsSmallFlows(t *testing.T) {
 		t.Fatalf("empty batch dispatched: %d", len(sink.batches))
 	}
 }
+
+func TestSetMinBytesPerMinute(t *testing.T) {
+	c := New(Options{Interval: time.Minute, MinFlowBytes: 8 << 10})
+	c.SetMinBytesPerMinute(16 << 10)
+	if _, min := c.pace(); min != 16<<10 {
+		t.Fatalf("min flow = %d", min)
+	}
+	c.SetInterval(30 * time.Second)
+	if _, min := c.pace(); min != 8<<10 {
+		t.Fatalf("scaled min flow = %d", min)
+	}
+}

@@ -24,7 +24,9 @@ const (
 	keyTLSKey    = "tls_key"
 	keyHTTPPort  = "http_port"
 	keyHTTPSPort = "https_port"
+	keyMinFlow   = "min_flow_kb_per_min"
 	maxSeconds   = 3600
+	maxMinFlowKB = 1024
 	maxAdded     = 400
 )
 
@@ -37,8 +39,14 @@ func (e *Error) Error() string { return e.Message }
 type Timing struct {
 	CollectSeconds int    `json:"collectSeconds"`
 	PolicySeconds  int    `json:"policySeconds"`
+	MinFlowKB      int    `json:"minFlowKB"`
 	RotateAt       string `json:"rotateAt"`
 	RotatePending  bool   `json:"rotatePending,omitempty"`
+}
+
+// minFlowHint 让概览页上的过滤说明跟着设置变。
+type minFlowHint interface {
+	SetMinFlowBytesPerMinute(int64)
 }
 
 // View 是系统设置页需要的数据。
@@ -65,6 +73,7 @@ type Service struct {
 	tlsRunningCert string
 	tlsRunningKey  string
 	tlsError       string
+	flowHint       minFlowHint
 }
 
 // Bind 把已经按启动配置跑起来的组件接上，便于之后修改立刻生效。
@@ -111,7 +120,21 @@ func ApplyStored(ctx context.Context, db *store.PolicyStore, cfg config.Config) 
 	if err := applyStoredPort(ctx, db, keyHTTPSPort, &cfg.HTTPSPort); err != nil {
 		return cfg, err
 	}
+	if v, ok, err := db.Setting(ctx, keyMinFlow); err != nil {
+		return cfg, err
+	} else if ok {
+		if n, err := strconv.Atoi(strings.TrimSpace(v)); err == nil && n >= 0 && n <= maxMinFlowKB {
+			cfg.MinFlowBytesPerMinute = int64(n) << 10
+		}
+	}
 	return cfg, nil
+}
+
+// UseMinFlowHint 让概览里的过滤说明使用页面上保存的阈值。
+func (s *Service) UseMinFlowHint(h minFlowHint) {
+	if s != nil {
+		s.flowHint = h
+	}
 }
 
 func applyStoredPort(ctx context.Context, db *store.PolicyStore, key string, dst *int) error {
@@ -161,10 +184,21 @@ func (s *Service) View(ctx context.Context) (View, error) {
 	} else if s.runningRotate != "" {
 		rotate = s.runningRotate
 	}
+	minKB := 8
+	if s.collector != nil {
+		minKB = int(s.collector.BytesPerMinute() >> 10)
+	} else if v, ok, err := s.db.Setting(ctx, keyMinFlow); err != nil {
+		return View{}, err
+	} else if ok {
+		if n, err := strconv.Atoi(v); err == nil {
+			minKB = n
+		}
+	}
 	return View{
 		Timing: Timing{
 			CollectSeconds: collect,
 			PolicySeconds:  policySec,
+			MinFlowKB:      minKB,
 			RotateAt:       rotate,
 			RotatePending:  rotate != s.runningRotate,
 		},
@@ -173,10 +207,13 @@ func (s *Service) View(ctx context.Context) (View, error) {
 	}, nil
 }
 
-// SaveTiming 保存间隔和统计日。间隔立刻生效，统计日在下次启动后生效。
-func (s *Service) SaveTiming(ctx context.Context, collect, policySec int, rotate string) (View, error) {
+// SaveTiming 保存间隔、小流量门槛和统计日。间隔和门槛立刻生效，统计日在下次启动后生效。
+func (s *Service) SaveTiming(ctx context.Context, collect, policySec, minFlowKB int, rotate string) (View, error) {
 	if collect < 1 || collect > maxSeconds || policySec < 1 || policySec > maxSeconds {
 		return View{}, &Error{Message: "间隔要在 1 到 3600 秒之间"}
+	}
+	if minFlowKB < 0 || minFlowKB > maxMinFlowKB {
+		return View{}, &Error{Message: "忽略流量要在 0 到 1024 KB/分钟之间"}
 	}
 	if _, _, err := parseClock(rotate); err != nil {
 		return View{}, &Error{Message: "统计日切换时间不正确，请用 03:00 这种格式"}
@@ -187,11 +224,16 @@ func (s *Service) SaveTiming(ctx context.Context, collect, policySec int, rotate
 	if err := s.db.SetSetting(ctx, keyPolicy, strconv.Itoa(policySec)); err != nil {
 		return View{}, err
 	}
+	if err := s.db.SetSetting(ctx, keyMinFlow, strconv.Itoa(minFlowKB)); err != nil {
+		return View{}, err
+	}
 	if err := s.db.SetSetting(ctx, keyRotate, rotate); err != nil {
 		return View{}, err
 	}
 	d := time.Duration(collect) * time.Second
+	perMin := int64(minFlowKB) << 10
 	if s.collector != nil {
+		s.collector.SetMinBytesPerMinute(perMin)
 		s.collector.SetInterval(d)
 	}
 	if s.usage != nil {
@@ -199,6 +241,9 @@ func (s *Service) SaveTiming(ctx context.Context, collect, policySec int, rotate
 	}
 	if s.engine != nil {
 		s.engine.SetCheckInterval(time.Duration(policySec) * time.Second)
+	}
+	if s.flowHint != nil {
+		s.flowHint.SetMinFlowBytesPerMinute(perMin)
 	}
 	return s.View(ctx)
 }

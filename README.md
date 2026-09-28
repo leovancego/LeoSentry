@@ -1,129 +1,194 @@
 # LeoSentry
 
-运行在软路由上的家庭上网行为监测与管控服务。识别家庭网络中各设备的上网行为（尤其是游戏、视频等），
-支持在 Web 页面上手动管控，或按可编辑的策略/规则自动管控（如限制孩子的上网时段与游戏时长）。
+运行在软路由上的家庭上网行为监测与管控服务。它观察各设备在访问哪些网站和应用、用了多久，并可以按策略限制上网时段、游戏和视频时长，或立刻暂停某台设备的外网。
 
-## 目标平台
+程序不转发数据包。转发和丢弃仍由 Linux 内核与 nftables 完成。LeoSentry 只做三件事：**观察、判断、改规则**。
 
-| 项目 | 说明 |
+## 界面
+
+每日概览：谁在线、在用什么、用了多久。
+
+![每日概览：设备卡片与时间线](docs/images/每日概览01.png)
+
+![每日概览：上网时段、行为类别与应用](docs/images/每日概览02.png)
+
+管控策略：按设备限制游戏、视频和上网时长，也可以暂停或临时延长。
+
+![管控策略](docs/images/管控策略.png)
+
+系统设置：类别名单和法定日历、寒暑假。
+
+![类别名单](docs/images/系统设置类别名单.png)
+
+![日历与寒暑假](docs/images/系统设置日历.png)
+
+| 文档 | 内容 |
 | --- | --- |
-| 系统 | ImmortalWrt 25.12.2 |
-| 硬件 | NanoPi R2S / RK3328 / ARM64 |
-| 防火墙 | firewall4 / nftables |
-| 语言 | Go（`CGO_ENABLED=0` 静态交叉编译） |
-| 存储 | SQLite（纯 Go 驱动） |
-| 接口 | REST API + 静态 HTML/CSS/JS Web UI（embed 进二进制） |
+| [docs/采集层技术设计.md](docs/采集层技术设计.md) | 流量怎么记下来、设备怎么认出、数据放在哪里 |
+| [docs/Web展示技术设计.md](docs/Web展示技术设计.md) | 管理页、登录、分类、策略如何下发到防火墙 |
 
-## 设计原则
+## 能做什么
 
-**LeoSentry 不处理任何网络包。** 所有转发、过滤仍由 Linux kernel + nftables 完成，程序只做三件事：
+- 按「设备 IP × 目标 IP」统计上下行流量，默认每 60 秒一条记录，并滤掉每分钟不足 8 KB 的心跳。
+- 用 DHCP 租约、静态绑定和邻居表把 IP 换成 MAC，并记住用户起的设备名。
+- 跟踪 dnsmasq 查询日志，把目标 IP 还原成用户最初查询的域名。
+- 用内置规则把域名和地址归到游戏、短视频、视频、直播等类别。规则可在页面上增删，也可整份导入导出。
+- 每日概览展示今天或昨天：谁在线、在用什么、用了多久、流量多大。筛选和图表在浏览器里完成。
+- 按设备设置每日时长和时段。日期可以是每天、法定工作日、法定休息日、指定星期、暑假或寒假。
+- 策略默认每 5 分钟检查一次。需要限制时只更新 nft 集合里的地址，不重建整张表。在页面上保存、暂停或临时延长会马上再检查一次。临时延长最多 180 分钟。
+- Web 需要登录。首次启动的密码是 `123456`，装好后应立刻改掉。
 
-> **观察 → 判断 → 改规则**
+## 边界
 
-- **观察**：周期性读取内核状态（conntrack、nft 计数器）和 DNS 解析结果，不抓包、不走用户态转发。
-- **判断**：在内存中关联、聚合出设备行为，交给策略引擎评估。
-- **改规则**：只维护独立的 nft 表 `inet leosentry`，通过 set/map 元素做差量更新，不整表重建，也不改动 fw4 的表。
+- 流量明细只统计 IPv4。完全禁止上网时还会按 MAC 丢弃转发流量，因此这条路径上的 IPv6 也会断；只禁游戏或视频时，只丢弃当前 DNS 记录里能归到这些类别的 IPv4。
+- 加密 DNS（DoH/DoT）、写死的 DNS、以及 App 自己的 HttpDNS，dnsmasq 看不到，对应流量会标成「未识别」，局部拦截也拦不到这些地址。
+- 手机系统的随机 MAC 会让同一台设备看起来像新设备。
+- 局域网桥接流量不经过 `forward` 钩子，设备之间互访不受这里的规则影响。
+- 闪存上只留当前统计日和紧挨着的前一天。更早的明细会删掉。页面没有更长的历史报表。
+- 默认会关闭 fw4 流量卸载，否则已建立的连接不再经过计数规则。
+
+## 运行环境
+
+在 ImmortalWrt 25.12（NanoPi R2S / RK3328）上开发和验证。依赖是 OpenWrt 系常见组件，不是绑定某一块板子：
+
+| 项目 | 要求 |
+| --- | --- |
+| 系统 | 带 nftables / firewall4、dnsmasq、procd 的 OpenWrt 或 ImmortalWrt |
+| 权限 | 以 root 运行（netlink、改 UCI、安装服务） |
+| 语言 | Go，`CGO_ENABLED=0` 静态编译。模块要求见 `go.mod` |
+| 存储 | SQLite，纯 Go 驱动 `modernc.org/sqlite` |
+| 界面 | 静态 HTML / CSS / JS，编译进二进制 |
 
 ## 架构
 
 ```
-Browser ──HTTP──▶ Static Web + REST API
-                        │
-                        ▼
-  Collector ──▶ Analyzer ──▶ Policy Engine ──▶ NFT Controller ──▶ nftables / fw4 ──▶ Internet
-  (DNS Map      (Activity     (Schedule          (inet leosentry
-   Conntrack     Category      Quota              差量更新)
-   NFT stats)    Game)         Block/Allow)
+浏览器 ──HTTP──▶ 静态页面 + REST
+                    │
+                    ▼
+采集 ──▶ 分类与当日聚合 ──▶ 策略引擎 ──▶ nft 集合差量更新 ──▶ inet leosentry
+ │
+ ├─ dnsmasq 日志 → IP 到域名
+ ├─ nft 计数器差分 → 流量明细
+ └─ conntrack 差分 → 是否在线
 ```
 
-### 数据流
+启动顺序：时区 → 读出页面里保存的间隔 → 打开数据库 → 系统设置（查询日志、关闭流量卸载）→ 重建 nft 表 → 设备识别 / DNS / conntrack → 做一次策略检查 → Web → 采集循环。退出时先补采不满一个周期的流量，再删掉 nft 表。
 
-1. **DNS Map**：跟踪 dnsmasq 查询日志（启动时读取已有日志预热），维护 `IP → 域名`，30 分钟未刷新即过期。
-2. **周期采集**：每 60 秒读取 `inet leosentry` 表中按"设备IP . 目标IP"计数的 nft 集合，差分得到上下行增量，过滤掉每分钟不足 8 KB 的心跳类小流量，结合 IP→MAC 对照表与 DNS Map 组装成记录，写入闪存上的 `today.db`（每天约数 MB，剩余空间不足时自动暂停写入）与内存当日计数器；conntrack 快照差分每 10 秒一次，只用于实时在线状态。
+数据放在 `data_dir`（默认 `/etc/leosentry/data`）：
 
-采集层（第 1、2 步）已实现，详细设计见 [docs/采集层技术设计.md](docs/采集层技术设计.md)。
-3. **分析**：服务端扫一遍当天明细、用规则库分类，聚合成「设备 × 10 分钟 × 应用」快照；浏览器负责筛选、排序和图表。Web 页见 [docs/Web展示技术设计.md](docs/Web展示技术设计.md)。
-4. **决策**：策略引擎根据时间段、配额和规则计算每台设备的期望控制状态（未实现）。
-5. **执行**：NFT Controller 对比期望状态和当前状态，只下发差量（未实现）。
+| 文件 | 内容 | 寿命 |
+| --- | --- | --- |
+| `today.db` | 当前统计日的流量明细 | 日切后变成昨天 |
+| `prev.db` | 上一个统计日 | 再日切时删除 |
+| `devices.db` | 设备名、首次出现、用过的 IP | 一直保留 |
+| `policy.db` | 策略、日历、类别修改、登录密码 | 一直保留 |
 
-## 目录结构
+统计日默认从凌晨 03:00 到次日 03:00。0 点到 3 点的使用记在前一天。
+
+## 目录
 
 ```
 .
-├── cmd/leosentry/            # 程序入口：运行服务 / install / uninstall / version
+├── cmd/leosentry/                 # 入口：运行 / install / uninstall / version
 ├── internal/
-│   ├── app/                  # 生命周期、依赖组装、流水线调度
-│   ├── config/               # UCI 配置加载与校验
-│   ├── sysconf/              # 启动时自动完成系统设置（dnsmasq 日志、流量卸载、时区）
-│   ├── installer/            # 安装为 procd 服务
-│   ├── model/                # 共享领域模型
-│   ├── device/               # 设备识别：DHCP 租约、静态绑定、邻居表
-│   ├── collector/            # 采集主循环
-│   │   ├── dns/              #   DNS Map（dnsmasq 查询日志）
-│   │   ├── conntrack/        #   conntrack 快照差分（实时在线状态）
-│   │   └── nftstats/         #   nft 流量计数读取与差分
-│   ├── usage/                # 内存当日累计计数器
-│   ├── statday/              # 统计日边界（默认 03:00 切换）
-│   ├── uci/                  # UCI 文件解析与 uci 命令封装
-│   ├── fswatch/              # inotify 文件变更通知
-│   ├── analyzer/             # 行为分析
-│   │   ├── activity/         #   时长/流量聚合
-│   │   ├── category/         #   域名分类
-│   │   └── game/             #   游戏识别
-│   ├── policy/               # 策略引擎
-│   │   ├── rule/             #   规则定义与求值
-│   │   ├── schedule/         #   时间段策略
-│   │   └── quota/            #   配额策略
-│   ├── nftctl/               # NFT Controller（独立表 inet leosentry）
-│   ├── store/                # SQLite：today.db 初始化、写入、每日切换与归档
-│   │   └── migrations/       #   内嵌的版本化迁移脚本
-│   └── api/                  # REST API
-│       ├── handler/          #   资源处理器
-│       └── middleware/       #   认证、日志、恢复
-├── web/                      # go:embed 静态资源包
-│   └── static/               #   HTML / CSS / JS / 图片
-├── api/                      # OpenAPI 接口文档
-├── assets/rules/             # 内置规则库
-│   ├── categories/           #   域名分类列表
-│   └── games/                #   游戏特征（域名/端口）
-├── configs/                  # 示例配置
-├── deploy/openwrt/           # OpenWrt 软件包打包（预留）
-├── docs/                     # 设计文档
-├── scripts/                  # 开发/部署辅助脚本
-├── test/                     # 集成测试
-├── Makefile
-└── go.mod
+│   ├── app/                       # 组装与启停
+│   ├── config/                    # UCI 配置
+│   ├── sysconf/                   # dnsmasq、流量卸载、时区、LAN 地址
+│   ├── installer/                 # procd 安装与页面触发的重启
+│   ├── collector/                 # 采集循环
+│   │   ├── dns/                   #   dnsmasq 日志与 DNS Map
+│   │   ├── conntrack/             #   在线状态
+│   │   └── nftstats/              #   计数器差分
+│   ├── device/                    # IP→MAC，以及设备页用的合并目录
+│   ├── analyzer/
+│   │   ├── activity/              # 今日/昨日概览聚合
+│   │   └── category/              # 域名与 IP 分类
+│   ├── policy/                    # 时长、时段、日历、下发防火墙
+│   ├── nftctl/                    # inet leosentry 的创建与集合差量
+│   ├── settings/                  # 页面上改间隔和类别名单
+│   ├── store/                     # today.db、prev.db、devices.db、policy.db
+│   ├── usage/                     # 内存中的当日累计（随批次更新）
+│   ├── statday/                   # 统计日边界
+│   ├── uci/                       # UCI 解析
+│   ├── fswatch/                   # inotify
+│   ├── model/                     # 采集记录与设备模型
+│   └── api/                       # HTTP、登录、各页面接口
+├── web/static/                    # 管理页
+├── assets/rules/                  # 内置分类
+├── assets/calendar/               # 内置法定节假日
+├── scripts/devweb/                # 本机用示例数据预览页面
+├── docs/
+├── deploy/openwrt/                # 软件包打包预留，尚未实现
+└── Makefile
 ```
 
-依赖方向：`api → policy/analyzer/store`，`app` 负责组装所有模块；`model` 不依赖任何 internal 包；
-`collector`、`nftctl` 只和内核交互，不依赖 `api`。
+`app` 负责把模块接在一起。`model` 不依赖其他 `internal` 包。采集和 nft 控制不依赖 API。
 
-## 性能要点（R2S 资源有限）
-
-- 使用 netlink 直连内核，不 fork `conntrack` / `nft` 命令行。
-- 采集结果只在内存中聚合，按批写入 SQLite（WAL 模式），减少对存储卡的写入。
-- DNS Map、设备表常驻内存，采用适合高频读取的结构，按 TTL 淘汰。
-- nft 规则用 set/map 表达，更新只改元素，内核侧匹配复杂度与规则数量无关。
-- 纯 Go 静态编译，单二进制部署，无 CGO 依赖。
+`internal/analyzer/game` 以及 `internal/policy` 下的 `rule`、`schedule`、`quota` 目前只有包注释，没有接入运行路径。分类在 `internal/analyzer/category`，时长和时段在 `internal/policy`。
 
 ## 构建
 
 ```sh
-make build        # 本机构建
-make build-arm64  # 交叉编译到 R2S（linux/arm64）
+make build        # 当前系统
+make build-arm64  # linux/arm64，用于 R2S
 make test
+make vet
 ```
 
-## 部署
+不连接路由器时，可以用示例数据看页面：
+
+```sh
+go run ./scripts/devweb
+```
+
+浏览器打开 `http://127.0.0.1:18088/`。这个进程不采集真实流量，也不能代替路由器上的安装。
+
+## 安装到软路由
 
 ```sh
 scp bin/leosentry-linux-arm64 root@192.168.1.1:/tmp/leosentry
 ssh root@192.168.1.1 'chmod +x /tmp/leosentry && /tmp/leosentry install'
 ```
 
-`install` 会安装二进制、procd 启动脚本和默认配置 `/etc/config/leosentry`，并设置开机自启。
-程序启动时自动开启 dnsmasq 查询日志（会注释掉 `/etc/dnsmasq.conf` 中冲突的 `log-facility` 行，重启后检查 dnsmasq 是否正常，异常则自动回滚）、关闭 fw4 流量卸载、创建 nft 表，无需手工执行命令。
-运行日志通过 `logread -e leosentry` 查看。
+`192.168.1.1` 是文档里的示例地址，改成自己的 LAN 地址。`install` 会：
 
-局域网浏览器打开 `http://<软路由 LAN IP>:8088/` 即可看今日概览（默认只监听 LAN 地址）。
-`http_port` 为 `0` 时关闭 Web；`http_address` 可指定监听 IP。页面目前没有登录，上管控功能前需要补认证。
+1. 把二进制复制到 `/usr/bin/leosentry`；
+2. 写入 `/etc/init.d/leosentry`（`START=99`，崩溃自动重启）；
+3. 若还没有 `/etc/config/leosentry`，写入带注释的默认配置；已有文件会保留；
+4. 设置开机自启并启动。
+
+`leosentry uninstall` 停掉并删掉服务，配置和 `data_dir` 留下。
+
+启动时会自动打开 dnsmasq 查询日志。若 `/etc/dnsmasq.conf` 里已有 `log-facility`，会先把那一行注释掉，否则 dnsmasq 会因重复关键字起不来。重启后做健康检查，失败则回滚。默认还会关闭 fw4 的软件/硬件流量卸载。日志：`logread -e leosentry`。
+
+局域网打开 `http://<LAN IP>:8088/`。默认只监听 LAN 接口上的 IPv4，不监听 `0.0.0.0`。`http_port` 设为 `0` 关闭页面；`http_address` 可指定监听地址。
+
+**第一次登录密码是 `123456`。** 请在「系统设置 → 登录密码」里修改。会话保存在进程内存中，重启服务后需要重新登录，有效期 30 天。
+
+## 配置
+
+`/etc/config/leosentry` 全部可选。下面是默认值；页面上改过的采集间隔、策略检查间隔和统计日切换会写进 `policy.db`，并覆盖这里的同名项。前两项保存后立刻生效，统计日切换在下次启动后生效。
+
+| 选项 | 默认 | 说明 |
+| --- | --- | --- |
+| `collect_interval` | `60` | 采集周期（秒），也是一条记录的时间粒度 |
+| `policy_interval` | `300` | 自动检查策略的间隔（秒） |
+| `conntrack_interval` | `10` | 刷新在线状态的间隔（秒） |
+| `rotate_at` | `03:00` | 统计日分界 |
+| `min_flow_kb_per_min` | `8` | 低于该速率的「设备 → 目标」不记录；`0` 表示全记 |
+| `min_free_mb` | `20` | 数据分区剩余空间低于该值时暂停写明细 |
+| `managed_network` | 空 | 受管网段，可写多条；空则用 `lan_device` 上的 IPv4 |
+| `lan_device` | `br-lan` | LAN 接口 |
+| `dns_ttl` | `1800` | 域名映射过期时间（秒） |
+| `http_port` / `http_address` | `8088` / 空 | 管理页；地址为空则只监听 LAN |
+| `archive_dir` | 空 | 见下方说明 |
+| `manage_dnsmasq` | `1` | 是否自动打开查询日志 |
+| `disable_flow_offload` | `1` | 是否自动关闭流量卸载 |
+
+其余路径、日志大小和时区见采集层文档第 7 节。
+
+`archive_dir` 仍会被读取：启动时若留空，日志里会提示未配置归档。当前日切只在闪存上轮换 `today.db` 与 `prev.db`，不再把结束的一天送去归档，管理页也不读归档文件。
+
+## 许可
+
+仓库里还没有 `LICENSE` 文件。公开到 GitHub 之前需要选定并加入一份许可证，否则其他人没有明确的使用授权。

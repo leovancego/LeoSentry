@@ -70,17 +70,19 @@ func tokenFrom(r *http.Request) string {
 	return c.Value
 }
 
-func setSessionCookie(w http.ResponseWriter, token string) {
+func setSessionCookie(w http.ResponseWriter, r *http.Request, token string) {
 	http.SetCookie(w, &http.Cookie{
 		Name: sessionCookie, Value: token, Path: "/", HttpOnly: true,
 		SameSite: http.SameSiteLaxMode, MaxAge: 30 * 24 * 3600,
+		Secure: r.TLS != nil,
 	})
 }
 
-func clearSessionCookie(w http.ResponseWriter) {
+func clearSessionCookie(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name: sessionCookie, Value: "", Path: "/", HttpOnly: true,
 		SameSite: http.SameSiteLaxMode, MaxAge: -1,
+		Secure: r.TLS != nil,
 	})
 }
 
@@ -130,7 +132,7 @@ func login(pass PasswordStore, sess *sessions, log *slog.Logger) http.HandlerFun
 			http.Error(w, "login failed", http.StatusInternalServerError)
 			return
 		}
-		setSessionCookie(w, token)
+		setSessionCookie(w, r, token)
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		_ = json.NewEncoder(w).Encode(map[string]string{"ok": "1"})
 	}
@@ -139,7 +141,7 @@ func login(pass PasswordStore, sess *sessions, log *slog.Logger) http.HandlerFun
 func logout(sess *sessions) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		sess.revoke(tokenFrom(r))
-		clearSessionCookie(w)
+		clearSessionCookie(w, r)
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		_ = json.NewEncoder(w).Encode(map[string]string{"ok": "1"})
 	}

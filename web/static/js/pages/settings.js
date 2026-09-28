@@ -1,4 +1,4 @@
-// 系统设置：类别名单、日历、采集与检查、登录密码、重启。
+// 系统设置：类别名单、日历、采集与检查、端口与证书、登录密码、重启。
 
 import { esc } from '../format.js';
 
@@ -13,6 +13,7 @@ const TABS = [
   ['rules', '类别名单'],
   ['calendar', '日历'],
   ['timing', '采集与检查'],
+  ['tls', '端口与证书'],
   ['password', '登录密码'],
   ['restart', '重启'],
 ];
@@ -85,6 +86,7 @@ function render() {
     rules: rulesHTML,
     calendar: () => calendarHTML(policy?.calendar || {}),
     timing: timingHTML,
+    tls: tlsHTML,
     password: passwordHTML,
     restart: restartHTML,
   };
@@ -118,6 +120,38 @@ function passwordHTML() {
         <button class="btn" type="button" id="logoutBtn">退出登录</button>
       </div>
       <div class="form-err" id="pwErr"></div>
+    </form>
+  </section>`;
+}
+
+function tlsHTML() {
+  const t = settings;
+  const savedCert = t.tlsCert || '';
+  const savedKey = t.tlsKey || '';
+  const runningCert = t.tlsRunningCert || '';
+  const runningKey = t.tlsRunningKey || '';
+  const pending = !t.tlsError && (
+    savedCert !== runningCert || savedKey !== runningKey ||
+    t.httpPort !== t.httpRunningPort || t.httpsPort !== t.httpsRunningPort
+  );
+  let status = `<p class="zone-note">当前 HTTP 端口 ${esc(t.httpRunningPort)}。${t.tlsActive ? `已启用 HTTPS，端口 ${esc(t.httpsRunningPort)}。` : '当前没有启用 HTTPS。'}</p>`;
+  if (t.tlsError) status = `<div class="banner">${esc(t.tlsError)}</div>`;
+  else if (pending) status = '<p class="zone-note">已保存的端口或证书要重新启动后才生效。</p>';
+  return `<section class="zone">
+    <div class="zone-title"><h2>端口与证书</h2></div>
+    <form id="tlsForm" class="settings-form">
+      <p class="zone-note">端口填 0 到 65535 的整数。0 表示关闭这一路，两个不能同时为 0，也不能相同。HTTP 默认 8088，HTTPS 默认 8443。</p>
+      <div class="time-grid">
+        <label>HTTP 端口<input class="search num-input" name="httpPort" inputmode="numeric" value="${esc(t.httpPort)}" autocomplete="off" spellcheck="false"></label>
+        <label>HTTPS 端口<input class="search num-input" name="httpsPort" inputmode="numeric" value="${esc(t.httpsPort)}" autocomplete="off" spellcheck="false"></label>
+      </div>
+      <p class="zone-note">证书和私钥填绝对路径，留空表示不启用 HTTPS。服务启动时检查证书，通过后才按 HTTPS 端口监听。</p>
+      ${status}
+      <label>证书<input class="search wide" name="cert" value="${esc(savedCert)}" spellcheck="false" autocomplete="off"></label>
+      <label>私钥<input class="search wide" name="key" value="${esc(savedKey)}" spellcheck="false" autocomplete="off"></label>
+      <div class="settings-actions"><button class="btn primary" type="submit">保存</button></div>
+      <p class="muted" id="tlsMsg"></p>
+      <div class="form-err" id="tlsErr"></div>
     </form>
   </section>`;
 }
@@ -179,7 +213,7 @@ function restartHTML() {
   return `<section class="zone">
     <div class="zone-title"><h2>重启服务</h2></div>
     ${pending}
-    <p class="zone-note">类别名单、日历、采集间隔、策略检查和登录密码保存后马上生效。只有统计日切换要等服务重新启动才用上。</p>
+    <p class="zone-note">类别名单、日历、采集间隔、策略检查和登录密码保存后马上生效。统计日切换要等重新启动。端口和 HTTPS 证书若和当前加载的不一致，在「端口与证书」页确认后会自动重启。</p>
     <p class="zone-note">重启会先把没采集完的流量补写进库，再按平时的方式把服务启动起来。中间几秒打不开这个页面。</p>
     <div class="settings-actions">
       <button class="btn danger" type="button" id="restartBtn">重新启动</button>
@@ -322,6 +356,9 @@ function onSubmit(e) {
   } else if (e.target.id === 'timeForm') {
     e.preventDefault();
     saveTiming(e.target);
+  } else if (e.target.id === 'tlsForm') {
+    e.preventDefault();
+    saveTLS(e.target);
   } else if (e.target.id === 'addRule') {
     e.preventDefault();
     addRule(e.target);
@@ -353,6 +390,72 @@ async function savePassword(form) {
   }
   form.reset();
   err.insertAdjacentHTML('beforebegin', '<p class="muted">密码已更新</p>');
+}
+
+function parsePort(raw) {
+  const s = String(raw ?? '').trim();
+  if (!/^[0-9]{1,5}$/.test(s)) return null;
+  const n = Number(s);
+  if (n > 65535) return null;
+  return n;
+}
+
+async function saveTLS(form) {
+  const fd = new FormData(form);
+  const cert = String(fd.get('cert') || '').trim();
+  const key = String(fd.get('key') || '').trim();
+  const httpPort = parsePort(fd.get('httpPort'));
+  const httpsPort = parsePort(fd.get('httpsPort'));
+  const err = document.getElementById('tlsErr');
+  const msg = document.getElementById('tlsMsg');
+  if (err) err.textContent = '';
+  if (msg) msg.textContent = '';
+  if (httpPort == null || httpsPort == null) {
+    if (err) err.textContent = '端口要是 0 到 65535 的整数';
+    return;
+  }
+  if (httpPort === 0 && httpsPort === 0) {
+    if (err) err.textContent = 'HTTP 和 HTTPS 不能同时关闭';
+    return;
+  }
+  if (httpPort > 0 && httpPort === httpsPort) {
+    if (err) err.textContent = 'HTTP 和 HTTPS 端口不能相同';
+    return;
+  }
+  if ((cert === '') !== (key === '')) {
+    if (err) err.textContent = '证书和私钥要一起填写，或一起留空';
+    return;
+  }
+  const savedCert = settings.tlsCert || '';
+  const savedKey = settings.tlsKey || '';
+  const runningCert = settings.tlsRunningCert || '';
+  const runningKey = settings.tlsRunningKey || '';
+  const needRestart = cert !== runningCert || key !== runningKey || httpPort !== settings.httpRunningPort || httpsPort !== settings.httpsRunningPort;
+  const unchanged = cert === savedCert && key === savedKey && httpPort === settings.httpPort && httpsPort === settings.httpsPort;
+  if (unchanged && !needRestart) {
+    if (msg) msg.textContent = '没有改动';
+    return;
+  }
+  if (needRestart) {
+    const parts = [`HTTP 端口 ${httpPort}，HTTPS 端口 ${httpsPort}`];
+    if (cert === '' && key === '') parts.push('未填写证书，不会启用 HTTPS');
+    else parts.push('启动时会检查证书，通过后才监听 HTTPS');
+    if (!confirm(`${parts.join('。')}。确定后会保存并重新启动服务，页面会断开几秒。请用新端口再打开。`)) return;
+  }
+  try {
+    const data = await send(SET + '/tls', 'PUT', { tlsCert: cert, tlsKey: key, httpPort, httpsPort });
+    settings = data;
+    error = '';
+    if (data.restart) {
+      await startRestart();
+      return;
+    }
+    render();
+    const ok = document.getElementById('tlsMsg');
+    if (ok) ok.textContent = '已保存';
+  } catch (ex) {
+    if (err) err.textContent = ex.message;
+  }
 }
 
 async function saveTiming(form) {
@@ -453,9 +556,13 @@ async function send(url, method, body, type = 'application/json') {
 
 async function askRestart() {
   if (!confirm('重新启动会先安全停止服务，再按平时的方式启动。页面会断开几秒，确定继续？')) return;
-  const err = document.getElementById('restartErr');
-  const msg = document.getElementById('restartMsg');
-  const btn = document.getElementById('restartBtn');
+  await startRestart();
+}
+
+async function startRestart() {
+  const err = document.getElementById('restartErr') || document.getElementById('tlsErr');
+  const msg = document.getElementById('restartMsg') || document.getElementById('tlsMsg');
+  const btn = document.getElementById('restartBtn') || document.querySelector('#tlsForm button[type="submit"]');
   if (err) err.textContent = '';
   if (msg) msg.textContent = '';
   if (btn) btn.disabled = true;
@@ -464,6 +571,7 @@ async function askRestart() {
     const body = await res.json().catch(() => ({}));
     if (res.status === 401) {
       window.dispatchEvent(new Event('leosentry-unauthorized'));
+      if (btn) btn.disabled = false;
       return;
     }
     if (!res.ok) {

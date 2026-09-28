@@ -64,6 +64,37 @@ func TestCategoryExportAndImport(t *testing.T) {
 	}
 }
 
+func TestSaveTLSEndpoint(t *testing.T) {
+	svc := openSettings(t)
+	svc.UseTLS("", "", 8088, 8443)
+	mux := http.NewServeMux()
+	Settings{API: svc, Log: slog.New(slog.NewTextHandler(io.Discard, nil))}.Register(mux)
+
+	rec := httptest.NewRecorder()
+	mux.ServeHTTP(rec, httptest.NewRequest(http.MethodPut, "/api/v1/settings/tls", strings.NewReader(`{"tlsCert":"/tmp/a.crt","tlsKey":"","httpPort":8088,"httpsPort":8443}`)))
+	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "一起填写") {
+		t.Fatalf("half code = %d body = %s", rec.Code, rec.Body.String())
+	}
+
+	rec = httptest.NewRecorder()
+	mux.ServeHTTP(rec, httptest.NewRequest(http.MethodPut, "/api/v1/settings/tls", strings.NewReader(`{"tlsCert":"","tlsKey":"","httpPort":8088.5,"httpsPort":8443}`)))
+	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "整数") {
+		t.Fatalf("float code = %d body = %s", rec.Code, rec.Body.String())
+	}
+
+	rec = httptest.NewRecorder()
+	mux.ServeHTTP(rec, httptest.NewRequest(http.MethodPut, "/api/v1/settings/tls", strings.NewReader(`{"tlsCert":"","tlsKey":"","httpPort":"abc","httpsPort":8443}`)))
+	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "整数") {
+		t.Fatalf("text code = %d body = %s", rec.Code, rec.Body.String())
+	}
+
+	rec = httptest.NewRecorder()
+	mux.ServeHTTP(rec, httptest.NewRequest(http.MethodPut, "/api/v1/settings/tls", strings.NewReader(`{"tlsCert":"","tlsKey":"","httpPort":8088,"httpsPort":8443}`)))
+	if rec.Code != http.StatusOK || strings.Contains(rec.Body.String(), `"restart":true`) {
+		t.Fatalf("empty code = %d body = %s", rec.Code, rec.Body.String())
+	}
+}
+
 func TestRestartEndpoint(t *testing.T) {
 	log := slog.New(slog.NewTextHandler(io.Discard, nil))
 	mux := http.NewServeMux()

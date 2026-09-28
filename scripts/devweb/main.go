@@ -133,12 +133,14 @@ func main() {
 	zw.Write(raw)
 	zw.Close()
 
+	pref := settings.Bind(pdb, rulesLive, nil, nil, eng, "03:00")
+	pref.UseTLS("", "", 8088, 8443)
 	srv, err := api.New(api.Options{
 		Addrs:     []string{"127.0.0.1:18088"},
 		Overview:  stubOverview{&activity.Snapshot{ETag: `"dev"`, JSON: raw, Gzip: buf.Bytes()}},
 		Devices:   cat,
 		Policies:  eng,
-		Settings:  settings.Bind(pdb, rulesLive, nil, nil, eng, "03:00"),
+		Settings:  pref,
 		Passwords: pdb,
 		Restart:   func() error { return installer.Restart(log) },
 		Logger:    log,

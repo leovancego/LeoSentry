@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -22,6 +23,7 @@ type SettingsAPI interface {
 	RemoveRule(ctx context.Context, category, value string) (settings.View, error)
 	ExportCategories(ctx context.Context) ([]byte, error)
 	ImportCategories(ctx context.Context, data []byte) (settings.View, error)
+	SaveTLS(ctx context.Context, cert, key string, httpPort, httpsPort int) (settings.View, bool, error)
 }
 
 // Settings 注册系统设置路由。
@@ -36,6 +38,7 @@ type Settings struct {
 func (h Settings) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/v1/settings", h.get)
 	mux.HandleFunc("PUT /api/v1/settings/timing", h.timing)
+	mux.HandleFunc("PUT /api/v1/settings/tls", h.tls)
 	mux.HandleFunc("POST /api/v1/settings/categories", h.add)
 	mux.HandleFunc("DELETE /api/v1/settings/categories", h.remove)
 	mux.HandleFunc("GET /api/v1/settings/categories/export", h.exportCategories)
@@ -46,6 +49,54 @@ func (h Settings) Register(mux *http.ServeMux) {
 func (h Settings) get(w http.ResponseWriter, r *http.Request) {
 	view, err := h.API.View(r.Context())
 	h.write(w, view, err)
+}
+
+func (h Settings) tls(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		Cert  string          `json:"tlsCert"`
+		Key   string          `json:"tlsKey"`
+		HTTP  json.RawMessage `json:"httpPort"`
+		HTTPS json.RawMessage `json:"httpsPort"`
+	}
+	if err := json.NewDecoder(io.LimitReader(r.Body, maxSmallBody)).Decode(&body); err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "设置格式不正确"})
+		return
+	}
+	httpPort, err := portFromJSON(body.HTTP)
+	if err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+		return
+	}
+	httpsPort, err := portFromJSON(body.HTTPS)
+	if err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+		return
+	}
+	view, restart, err := h.API.SaveTLS(r.Context(), body.Cert, body.Key, httpPort, httpsPort)
+	if err != nil {
+		h.write(w, settings.View{}, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, struct {
+		settings.View
+		Restart bool `json:"restart,omitempty"`
+	}{view, restart})
+}
+
+func portFromJSON(raw json.RawMessage) (int, error) {
+	raw = bytes.TrimSpace(raw)
+	if len(raw) == 0 || string(raw) == "null" {
+		return 0, errors.New("端口要是 0 到 65535 的整数")
+	}
+	text := string(raw)
+	if raw[0] == '"' {
+		var s string
+		if err := json.Unmarshal(raw, &s); err != nil {
+			return 0, errors.New("端口要是 0 到 65535 的整数")
+		}
+		text = s
+	}
+	return settings.ParsePort(text)
 }
 
 func (h Settings) timing(w http.ResponseWriter, r *http.Request) {

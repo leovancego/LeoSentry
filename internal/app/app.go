@@ -4,7 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"net/netip"
+	"net"
+	"strings"
 	"sync"
 	"time"
 
@@ -204,7 +205,7 @@ func Run(ctx context.Context, cfg config.Config, log *slog.Logger) error {
 		catalog  *device.Catalog
 		overview *activity.Builder
 	)
-	if cfg.HTTPPort > 0 {
+	if webUIEnabled(cfg) {
 		var liveOnline device.OnlineSource
 		if tracker != nil {
 			liveOnline = tracker
@@ -238,7 +239,8 @@ func Run(ctx context.Context, cfg config.Config, log *slog.Logger) error {
 		Logger:       log,
 	})
 	pref := settings.Bind(pdb, live, usage, col, eng, fmt.Sprintf("%02d:%02d", cfg.RotateHour, cfg.RotateMinute))
-	if cfg.HTTPPort > 0 {
+	pref.UseTLS(cfg.TLSCertFile, cfg.TLSKeyFile, cfg.HTTPPort, cfg.HTTPSPort)
+	if webUIEnabled(cfg) {
 		if err := startWebUI(ctx, &wg, cfg, overview, catalog, eng, pref, pdb, log); err != nil {
 			log.Error("web ui disabled", "err", err)
 		}
@@ -247,6 +249,41 @@ func Run(ctx context.Context, cfg config.Config, log *slog.Logger) error {
 
 	log.Info("leosentry stopping")
 	return nil
+}
+
+// httpsListeners 在证书路径非空时检查证书，并确认端口能监听。证书留空则不启用 HTTPS。
+// 监听地址是 ":端口"，绑在全部网卡上。
+func httpsListeners(log *slog.Logger, cfg config.Config) ([]string, string) {
+	cert := strings.TrimSpace(cfg.TLSCertFile)
+	key := strings.TrimSpace(cfg.TLSKeyFile)
+	if cert == "" && key == "" {
+		return nil, ""
+	}
+	if err := settings.CheckTLS(cert, key); err != nil {
+		log.Error("https disabled", "err", err)
+		return nil, err.Error()
+	}
+	if cfg.HTTPSPort <= 0 {
+		msg := "https_port 为 0，未启动 HTTPS"
+		log.Error("https disabled", "err", msg)
+		return nil, msg
+	}
+	addr := fmt.Sprintf(":%d", cfg.HTTPSPort)
+	ln, err := net.Listen("tcp", addr)
+	if err != nil {
+		msg := "HTTPS 端口无法监听：" + err.Error()
+		log.Error("https disabled", "addr", addr, "err", err)
+		return nil, msg
+	}
+	ln.Close()
+	return []string{addr}, ""
+}
+
+func listenAddr(port int) []string {
+	if port <= 0 {
+		return nil
+	}
+	return []string{fmt.Sprintf(":%d", port)}
 }
 
 func importDeviceSightings(ctx context.Context, st *store.Store, reg *store.Registry, log *slog.Logger) error {
@@ -267,23 +304,27 @@ func importDeviceSightings(ctx context.Context, st *store.Store, reg *store.Regi
 	return nil
 }
 
-// startWebUI 启动 Web UI。未指定 http_address 时只监听 LAN 接口上的地址，不暴露到 WAN。
+func webUIEnabled(cfg config.Config) bool {
+	return cfg.HTTPPort > 0 || cfg.HTTPSPort > 0
+}
+
+// startWebUI 启动 Web UI。HTTP 与 HTTPS 都监听全部网卡，地址形如 ":8088"、":8443"。
 func startWebUI(ctx context.Context, wg *sync.WaitGroup, cfg config.Config, overview *activity.Builder, devices *device.Catalog, policies *policy.Engine, pref *settings.Service, passwords api.PasswordStore, log *slog.Logger) error {
-	var ips []netip.Addr
-	if cfg.HTTPAddress != "" {
-		ips = []netip.Addr{netip.MustParseAddr(cfg.HTTPAddress)}
+	tlsAddrs, tlsErr := httpsListeners(log, cfg)
+	if tlsErr == "" && len(tlsAddrs) > 0 {
+		pref.NoteTLS(strings.TrimSpace(cfg.TLSCertFile), strings.TrimSpace(cfg.TLSKeyFile), "")
 	} else {
-		var err error
-		if ips, err = sysconf.LANAddrs(cfg.LANDevice); err != nil {
-			return err
-		}
+		pref.NoteTLS("", "", tlsErr)
 	}
-	addrs := make([]string, len(ips))
-	for i, ip := range ips {
-		addrs[i] = netip.AddrPortFrom(ip, uint16(cfg.HTTPPort)).String()
+	var certFile, keyFile string
+	if len(tlsAddrs) > 0 {
+		certFile = strings.TrimSpace(cfg.TLSCertFile)
+		keyFile = strings.TrimSpace(cfg.TLSKeyFile)
 	}
 	srv, err := api.New(api.Options{
-		Addrs: addrs, Overview: overview, Devices: devices, Policies: policies,
+		Addrs: listenAddr(cfg.HTTPPort), TLSAddrs: tlsAddrs,
+		TLSCertFile: certFile, TLSKeyFile: keyFile,
+		Overview: overview, Devices: devices, Policies: policies,
 		Settings: pref, Passwords: passwords, Restart: func() error { return installer.Restart(log) }, Logger: log,
 	})
 	if err != nil {

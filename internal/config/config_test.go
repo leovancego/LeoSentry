@@ -55,6 +55,9 @@ config leosentry 'main'
 	if cfg.HTTPPort != 0 {
 		t.Errorf("http port = %d, want disabled", cfg.HTTPPort)
 	}
+	if cfg.HTTPSPort != Default().HTTPSPort || cfg.TLSCertFile != Default().TLSCertFile || cfg.TLSKeyFile != Default().TLSKeyFile {
+		t.Errorf("https defaults changed: port %d cert %s", cfg.HTTPSPort, cfg.TLSCertFile)
+	}
 }
 
 func TestValidateHTTP(t *testing.T) {
@@ -76,6 +79,28 @@ func TestValidateHTTP(t *testing.T) {
 	}
 }
 
+func TestValidateHTTPS(t *testing.T) {
+	if err := Default().Validate(); err != nil {
+		t.Fatal(err)
+	}
+	clash := Default()
+	clash.HTTPSPort = clash.HTTPPort
+	if err := clash.Validate(); err == nil {
+		t.Fatal("expected https_port to differ from http_port")
+	}
+	half := Default()
+	half.TLSCertFile = "/etc/ssl/certs/example.crt"
+	if err := half.Validate(); err == nil {
+		t.Fatal("expected tls_cert and tls_key to be a pair")
+	}
+	off := Default()
+	off.HTTPSPort = 0
+	off.TLSCertFile, off.TLSKeyFile = "", ""
+	if err := off.Validate(); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestDefaultUCIRoundTrip(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "leosentry")
 	if err := os.WriteFile(path, []byte(DefaultUCI()), 0o644); err != nil {
@@ -88,7 +113,8 @@ func TestDefaultUCIRoundTrip(t *testing.T) {
 	d := Default()
 	if cfg.DataDir != d.DataDir || cfg.DNSTTL != d.DNSTTL || cfg.RotateHour != d.RotateHour || !cfg.DisableFlowOffload ||
 		cfg.CollectInterval != d.CollectInterval || cfg.MinFlowBytesPerMinute != d.MinFlowBytesPerMinute || cfg.MinFreeSpace != d.MinFreeSpace ||
-		cfg.HTTPPort != d.HTTPPort || cfg.HTTPAddress != d.HTTPAddress {
+		cfg.HTTPPort != d.HTTPPort || cfg.HTTPAddress != d.HTTPAddress ||
+		cfg.HTTPSPort != d.HTTPSPort || cfg.TLSCertFile != d.TLSCertFile || cfg.TLSKeyFile != d.TLSKeyFile {
 		t.Fatalf("round trip mismatch: %+v", cfg)
 	}
 }

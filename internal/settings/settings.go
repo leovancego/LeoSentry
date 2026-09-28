@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/leo/leosentry/internal/analyzer/category"
@@ -15,12 +16,16 @@ import (
 )
 
 const (
-	keyCollect = "collect_interval"
-	keyPolicy  = "policy_interval"
-	keyRotate  = "rotate_at"
-	keyRules   = "category_edits"
-	maxSeconds = 3600
-	maxAdded   = 400
+	keyCollect   = "collect_interval"
+	keyPolicy    = "policy_interval"
+	keyRotate    = "rotate_at"
+	keyRules     = "category_edits"
+	keyTLSCert   = "tls_cert"
+	keyTLSKey    = "tls_key"
+	keyHTTPPort  = "http_port"
+	keyHTTPSPort = "https_port"
+	maxSeconds   = 3600
+	maxAdded     = 400
 )
 
 // Error 是可以展示给用户的设置错误。
@@ -39,17 +44,27 @@ type Timing struct {
 // View 是系统设置页需要的数据。
 type View struct {
 	Timing
+	TLS
 	Categories []category.Group `json:"categories"`
 }
 
 // Service 读写会立刻影响采集和策略检查的设置，以及类别名单。
 type Service struct {
-	db            *store.PolicyStore
-	live          *category.Live
-	usage         *policy.Usage
-	collector     *collector.Collector
-	engine        *policy.Engine
-	runningRotate string
+	db             *store.PolicyStore
+	live           *category.Live
+	usage          *policy.Usage
+	collector      *collector.Collector
+	engine         *policy.Engine
+	runningRotate  string
+	tlsCert        string
+	tlsKey         string
+	httpPort       int
+	tlsPort        int
+	runningHTTP    int
+	runningHTTPS   int
+	tlsRunningCert string
+	tlsRunningKey  string
+	tlsError       string
 }
 
 // Bind 把已经按启动配置跑起来的组件接上，便于之后修改立刻生效。
@@ -80,7 +95,36 @@ func ApplyStored(ctx context.Context, db *store.PolicyStore, cfg config.Config) 
 			cfg.RotateHour, cfg.RotateMinute = h, m
 		}
 	}
+	if v, ok, err := db.Setting(ctx, keyTLSCert); err != nil {
+		return cfg, err
+	} else if ok {
+		cfg.TLSCertFile = strings.TrimSpace(v)
+	}
+	if v, ok, err := db.Setting(ctx, keyTLSKey); err != nil {
+		return cfg, err
+	} else if ok {
+		cfg.TLSKeyFile = strings.TrimSpace(v)
+	}
+	if err := applyStoredPort(ctx, db, keyHTTPPort, &cfg.HTTPPort); err != nil {
+		return cfg, err
+	}
+	if err := applyStoredPort(ctx, db, keyHTTPSPort, &cfg.HTTPSPort); err != nil {
+		return cfg, err
+	}
 	return cfg, nil
+}
+
+func applyStoredPort(ctx context.Context, db *store.PolicyStore, key string, dst *int) error {
+	v, ok, err := db.Setting(ctx, key)
+	if err != nil || !ok {
+		return err
+	}
+	n, err := strconv.Atoi(strings.TrimSpace(v))
+	if err != nil || n < 0 || n > 65535 {
+		return nil
+	}
+	*dst = n
+	return nil
 }
 
 // View 返回当前设置和各类别名单。
@@ -124,6 +168,7 @@ func (s *Service) View(ctx context.Context) (View, error) {
 			RotateAt:       rotate,
 			RotatePending:  rotate != s.runningRotate,
 		},
+		TLS:        s.tlsView(),
 		Categories: groups,
 	}, nil
 }

@@ -55,10 +55,15 @@ type Config struct {
 	ARPFile        string
 	ConntrackFile  string
 
-	// HTTPPort 为 Web UI 端口，0 表示不启动 Web UI。
+	// HTTPPort 为 Web UI 的 HTTP 端口，0 表示不监听 HTTP。
 	HTTPPort int
-	// HTTPAddress 为 Web UI 监听的 IP，为空时只监听 LANDevice 上的 IPv4 地址（不暴露到 WAN）。
+	// HTTPAddress 仍会被读取。Web 实际监听全部网卡，地址是 ":端口"，不使用这个 IP。
 	HTTPAddress string
+	// HTTPSPort 为 Web UI 的 HTTPS 端口，默认 8443。0 表示不监听 HTTPS。只有同时配了证书和私钥才会启用。
+	HTTPSPort int
+	// TLSCertFile、TLSKeyFile 是站点证书和私钥的绝对路径。默认为空，表示不启用 HTTPS。
+	TLSCertFile string
+	TLSKeyFile  string
 
 	// ManageDnsmasq 为 true 时自动配置并重启 dnsmasq 以开启查询日志。
 	ManageDnsmasq bool
@@ -88,6 +93,7 @@ func Default() Config {
 		ARPFile:               "/proc/net/arp",
 		ConntrackFile:         "/proc/net/nf_conntrack",
 		HTTPPort:              8088,
+		HTTPSPort:             8443,
 		ManageDnsmasq:         true,
 		DisableFlowOffload:    true,
 	}
@@ -201,6 +207,9 @@ func (c *Config) apply(s *uci.Section) error {
 	str("dhcp_config_file", &c.DHCPConfigFile)
 	num("http_port", &c.HTTPPort)
 	str("http_address", &c.HTTPAddress)
+	num("https_port", &c.HTTPSPort)
+	str("tls_cert", &c.TLSCertFile)
+	str("tls_key", &c.TLSKeyFile)
 	boolean("manage_dnsmasq", &c.ManageDnsmasq)
 	boolean("disable_flow_offload", &c.DisableFlowOffload)
 	return errors.Join(errs...)
@@ -235,6 +244,15 @@ func (c Config) Validate() error {
 	}
 	if c.HTTPPort < 0 || c.HTTPPort > 65535 {
 		errs = append(errs, errors.New("http_port must be within 0-65535"))
+	}
+	if c.HTTPSPort < 0 || c.HTTPSPort > 65535 {
+		errs = append(errs, errors.New("https_port must be within 0-65535"))
+	}
+	if c.HTTPPort > 0 && c.HTTPPort == c.HTTPSPort {
+		errs = append(errs, errors.New("https_port must differ from http_port"))
+	}
+	if (c.TLSCertFile == "") != (c.TLSKeyFile == "") {
+		errs = append(errs, errors.New("tls_cert and tls_key must both be set or both be empty"))
 	}
 	if c.HTTPAddress != "" {
 		if _, err := netip.ParseAddr(c.HTTPAddress); err != nil {
@@ -280,9 +298,13 @@ func DefaultUCI() string {
 	w("dns_ttl", strconv.Itoa(int(d.DNSTTL/time.Second)))
 	w("leases_file", d.LeasesFile)
 	w("dhcp_config_file", d.DHCPConfigFile)
-	b.WriteString("\t# Web 管理页面端口，0 表示关闭；http_address 留空则只监听 lan_device 上的地址\n")
+	b.WriteString("\t# Web 管理页面。端口也可在系统设置里改，0 表示关闭该协议。监听全部网卡，地址形如 :8088\n")
+	b.WriteString("\t# https_port 默认 8443。tls_cert 与 tls_key 留空表示不启用 HTTPS。启动时会检查证书\n")
 	w("http_port", strconv.Itoa(d.HTTPPort))
 	w("http_address", d.HTTPAddress)
+	w("https_port", strconv.Itoa(d.HTTPSPort))
+	w("tls_cert", d.TLSCertFile)
+	w("tls_key", d.TLSKeyFile)
 	w("manage_dnsmasq", "1")
 	w("disable_flow_offload", "1")
 	return b.String()

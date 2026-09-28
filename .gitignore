@@ -27,6 +27,21 @@ go.work.sum
 # env file
 .env
 
-# Editor/IDE
-# .idea/
-# .vscode/
+
+# Build output
+/bin/
+/dist/
+
+# Local data
+*.db
+*.db-shm
+*.db-wal
+
+# Test / coverage
+*.out
+coverage.*
+
+# Editor / OS
+.idea/
+.vscode/
+.DS_Store

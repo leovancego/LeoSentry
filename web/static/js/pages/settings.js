@@ -489,7 +489,6 @@ async function addRule(form) {
 }
 
 async function importRules(file) {
-  if (!confirm('导入会替换当前全部类别的名单，确定继续？')) return;
   notice = '';
   try {
     const text = await file.text();

@@ -16,10 +16,11 @@ type Edit struct {
 	Added   []Added
 }
 
-// Added 是用户加到某个类别上的一条网站、通配或 IPv4。
+// Added 是用户加到某个类别上的一条网站、通配或 IPv4。Name 为空时界面用 Value 显示。
 type Added struct {
 	Category string `json:"category"`
 	Value    string `json:"value"`
+	Name     string `json:"name,omitempty"`
 }
 
 // Entry 是某个类别下的一条名单。
@@ -179,13 +180,17 @@ func Catalog(edit Edit) ([]Group, *Matcher, error) {
 			continue
 		}
 		seenAdded[value] = struct{}{}
-		groups[gi].Entries = append(groups[gi].Entries, Entry{Name: value, Value: value, Kind: kind})
+		name := strings.TrimSpace(item.Name)
+		if name == "" {
+			name = value
+		}
+		groups[gi].Entries = append(groups[gi].Entries, Entry{Name: name, Value: value, Kind: kind})
 		row := struct {
 			Name     string   `json:"name"`
 			Category string   `json:"category"`
 			Domains  []string `json:"domains"`
 			Patterns []string `json:"patterns"`
-		}{Name: value, Category: item.Category}
+		}{Name: name, Category: item.Category}
 		if kind == KindPattern {
 			row.Patterns = []string{value}
 		} else {

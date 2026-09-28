@@ -157,18 +157,18 @@ go run ./scripts/devweb
 
 ## 下载
 
-当前版本 **V1.0.1**，适用于 ImmortalWrt / OpenWrt 的 linux/arm64（如 NanoPi R2S）。发布包放在 GitHub Release 上，不进入 git 仓库。
+当前版本 **V1.0.2**，适用于 ImmortalWrt / OpenWrt 的 linux/arm64（如 NanoPi R2S）。发布包放在 GitHub Release 上，不进入 git 仓库。
 
-[下载 leosentry-linux-arm64](https://github.com/leovancego/LeoSentry/releases/download/V1.0.1/leosentry-linux-arm64)
+[下载 leosentry-linux-arm64](https://github.com/leovancego/LeoSentry/releases/download/V1.0.2/leosentry-linux-arm64)
 
-[查看 V1.0.1 发布说明](https://github.com/leovancego/LeoSentry/releases/tag/V1.0.1)
+[查看 V1.0.2 发布说明](https://github.com/leovancego/LeoSentry/releases/tag/V1.0.2)
 
 ## 安装到软路由
 
 在路由器上：
 
 ```sh
-wget -O /tmp/leosentry https://github.com/leovancego/LeoSentry/releases/download/V1.0.1/leosentry-linux-arm64
+wget -O /tmp/leosentry https://github.com/leovancego/LeoSentry/releases/download/V1.0.2/leosentry-linux-arm64
 chmod +x /tmp/leosentry && /tmp/leosentry install
 ```
 

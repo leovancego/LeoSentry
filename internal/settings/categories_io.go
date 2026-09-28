@@ -117,13 +117,17 @@ func editFromDocument(data []byte, base []category.Group) (category.Edit, error)
 		}
 		seenCat[id] = struct{}{}
 		for _, rawEntry := range entries {
-			value, err := decodeEntry(display, rawEntry)
+			name, value, err := decodeEntry(display, rawEntry)
 			if err != nil {
 				return category.Edit{}, err
 			}
 			norm, vErr := normalizeValue(value)
 			if vErr != nil {
 				return category.Edit{}, vErr
+			}
+			name, err = cleanName(name, norm)
+			if err != nil {
+				return category.Edit{}, err
 			}
 			if prev, dup := desired[norm]; dup {
 				if prev == id {
@@ -135,7 +139,7 @@ func editFromDocument(data []byte, base []category.Group) (category.Edit, error)
 			if builtin[norm] == id {
 				continue
 			}
-			added = append(added, category.Added{Category: id, Value: norm})
+			added = append(added, category.Added{Category: id, Value: norm, Name: name})
 		}
 	}
 
@@ -204,37 +208,46 @@ func decodeCategory(raw json.RawMessage, known map[string]string) (string, []jso
 	return id, entries, nil
 }
 
-func decodeEntry(catName string, raw json.RawMessage) (string, error) {
+func decodeEntry(catName string, raw json.RawMessage) (name, value string, err error) {
 	if !isJSONObject(raw) {
-		return "", &Error{Message: "类别「" + catName + "」的名单格式不正确"}
+		return "", "", &Error{Message: "类别「" + catName + "」的名单格式不正确"}
 	}
 	var obj map[string]json.RawMessage
 	if err := json.Unmarshal(raw, &obj); err != nil {
-		return "", &Error{Message: "类别「" + catName + "」的名单格式不正确"}
+		return "", "", &Error{Message: "类别「" + catName + "」的名单格式不正确"}
 	}
 	for k := range obj {
 		if k != "name" && k != "value" {
-			return "", &Error{Message: "类别「" + catName + "」的名单格式不正确"}
+			return "", "", &Error{Message: "类别「" + catName + "」的名单格式不正确"}
 		}
 	}
 	rawValue, ok := obj["value"]
 	if !ok {
-		return "", &Error{Message: "类别「" + catName + "」有一条名单没有填写网站或 IP"}
+		return "", "", &Error{Message: "类别「" + catName + "」有一条名单没有填写网站或 IP"}
 	}
-	var value string
 	if json.Unmarshal(rawValue, &value) != nil {
-		return "", &Error{Message: "类别「" + catName + "」的名单格式不正确"}
+		return "", "", &Error{Message: "类别「" + catName + "」的名单格式不正确"}
 	}
 	if rawName, ok := obj["name"]; ok {
-		var name string
 		if json.Unmarshal(rawName, &name) != nil {
-			return "", &Error{Message: "类别「" + catName + "」的名单格式不正确"}
+			return "", "", &Error{Message: "类别「" + catName + "」的名单格式不正确"}
 		}
 	}
 	if strings.TrimSpace(value) == "" {
-		return "", &Error{Message: "类别「" + catName + "」有一条名单没有填写网站或 IP"}
+		return "", "", &Error{Message: "类别「" + catName + "」有一条名单没有填写网站或 IP"}
 	}
-	return value, nil
+	return name, value, nil
+}
+
+func cleanName(name, value string) (string, error) {
+	name = strings.TrimSpace(name)
+	if name == "" || name == value {
+		return "", nil
+	}
+	if utf8.RuneCountInString(name) > 40 {
+		return "", &Error{Message: "名称太长：" + clip(name)}
+	}
+	return name, nil
 }
 
 func normalizeValue(raw string) (string, error) {

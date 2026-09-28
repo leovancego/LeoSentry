@@ -188,7 +188,7 @@ func TestImportReplacesLists(t *testing.T) {
 		categoryDocumentEntry{Value: "smoba.qq.com"},
 		categoryDocumentEntry{Value: " Extra.EXAMPLE "},
 		categoryDocumentEntry{Value: "*.wild.example"},
-		categoryDocumentEntry{Value: "8.8.8.8"},
+		categoryDocumentEntry{Name: "公共 DNS", Value: "8.8.8.8"},
 	)
 	view, err := svc.ImportCategories(ctx, mustJSON(t, doc))
 	if err != nil {
@@ -217,8 +217,21 @@ func TestImportReplacesLists(t *testing.T) {
 	if _, ok := m.Match("a.wild.example"); !ok {
 		t.Fatal("imported wildcard should match")
 	}
-	if _, ok := m.MatchIP(netip.MustParseAddr("8.8.8.8")); !ok {
+	ipIdx, ok := m.MatchIP(netip.MustParseAddr("8.8.8.8"))
+	if !ok {
 		t.Fatal("imported ip should match")
+	}
+	if m.App(ipIdx).Name != "公共 DNS" {
+		t.Fatalf("imported name = %s", m.App(ipIdx).Name)
+	}
+	var namedIP bool
+	for _, e := range groupByID(view.Categories, "edu").Entries {
+		if e.Value == "8.8.8.8" && e.Name == "公共 DNS" {
+			namedIP = true
+		}
+	}
+	if !namedIP {
+		t.Fatal("imported ip name was dropped")
 	}
 	if _, ok := m.MatchIP(netip.MustParseAddr("9.9.9.9")); ok {
 		t.Fatal("previous custom ip should be gone")
